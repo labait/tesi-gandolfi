@@ -56,9 +56,11 @@
     <button
       v-if="hasImage"
       @click="analyze"
-      class="mt-8 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      :disabled="isAnalyzing"
+      class="mt-8 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      Analizza Immagine
+      <span v-if="!isAnalyzing">Analizza Immagine</span>
+      <span v-else>Analisi in corso...</span>
     </button>
   </div>
 </template>
@@ -70,6 +72,8 @@ const fileInput = ref(null)
 const isDragging = ref(false)
 const imagePreview = ref(null)
 const imageName = ref('')
+const imageFile = ref(null)
+const isAnalyzing = ref(false)
 
 const hasImage = computed(() => imagePreview.value !== null)
 
@@ -103,6 +107,7 @@ const processFile = (file) => {
   }
 
   imageName.value = file.name
+  imageFile.value = file
   const reader = new FileReader()
   reader.onload = (e) => {
     imagePreview.value = e.target.result
@@ -116,8 +121,38 @@ const triggerFileInput = () => {
   }
 }
 
-const analyze = () => {
-  console.log('upload image…')
+const analyze = async () => {
+  if (!imageFile.value) {
+    console.error('Nessuna immagine selezionata')
+    return
+  }
+
+  isAnalyzing.value = true
+
+  try {
+    // Crea FormData per inviare l'immagine
+    const formData = new FormData()
+    formData.append('image', imageFile.value)
+
+    // Chiama la funzione serverless di Netlify
+    const response = await fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Errore: ${response.status} - ${errorText}`)
+    }
+
+    const data = await response.json()
+    console.log('Output:', data)
+    
+  } catch (error) {
+    console.error('Errore durante l\'analisi:', error)
+  } finally {
+    isAnalyzing.value = false
+  }
 }
 </script>
 
