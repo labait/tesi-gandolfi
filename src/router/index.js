@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../views/Homepage.vue'
 import Search from '../views/Search.vue'
 import Profile from '../views/Profile.vue'
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
