@@ -2,17 +2,19 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAMTnGofzUYQH5MMK0Q1s5K2pGJmrD-5M4",
-  authDomain: "nofomo-bd09a.firebaseapp.com",
-  projectId: "nofomo-bd09a",
-  storageBucket: "nofomo-bd09a.firebasestorage.app",
-  messagingSenderId: "343937704550",
-  appId: "1:343937704550:web:03be3ef7f2e358ceabc3a7",
-  measurementId: "G-281G9L93F6"
+  apiKey: "AIzaSyC33X_tX977xAFDnlD-cD4jROrTYuVqWew",
+  authDomain: "nofomo-36b6c.firebaseapp.com",
+  projectId: "nofomo-36b6c",
+  storageBucket: "nofomo-36b6c.firebasestorage.app",
+  messagingSenderId: "546533255296",
+  appId: "1:546533255296:web:254863366d0194c0e99e65",
+  measurementId: "G-R86SC2LF92"
 };
 
 // Initialize Firebase
@@ -23,5 +25,11 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-export { auth, googleProvider, analytics };
+// Initialize Firestore
+const db = getFirestore(app);
+
+// Initialize Storage
+const storage = getStorage(app);
+
+export { auth, googleProvider, analytics, db, storage };
 

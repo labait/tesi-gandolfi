@@ -1,5 +1,17 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+import { auth } from '../Firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 import List from '../components/List.vue'
+import ProjectForm from '../components/ProjectForm.vue'
+
+const user = ref(null)
+
+onMounted(() => {
+  onAuthStateChanged(auth, (currentUser) => {
+    user.value = currentUser
+  })
+})
 
 const items = Array(20).fill().map( (i, index) => {
   return {
@@ -12,6 +24,9 @@ console.log(items)
 
 <template>
   <div>
+    <div v-if="user" class="mb-6 flex justify-center">
+      <ProjectForm />
+    </div>
     <List :items="items" />
   </div>
 </template>
