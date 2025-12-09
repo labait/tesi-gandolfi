@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regole per la collezione projects
+    match /projects/{projectId} {
+      // Permette la lettura a tutti gli utenti autenticati
+      allow read: if request.auth != null;
+      
+      // Permette la creazione solo agli utenti autenticati
+      // e verifica che l'uid del progetto corrisponda all'uid dell'utente
+      allow create: if request.auth != null 
+                    && request.resource.data.uid == request.auth.uid;
+      
+      // Permette l'aggiornamento solo se:
+      // - l'utente è autenticato
+      // - l'uid del progetto esistente corrisponde all'uid dell'utente
+      // - l'uid non viene modificato (per sicurezza)
+      allow update: if request.auth != null 
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.uid == request.auth.uid;
+      
+      // Permette la cancellazione solo se:
+      // - l'utente è autenticato
+      // - l'uid del progetto corrisponde all'uid dell'utente
+      allow delete: if request.auth != null 
+                    && resource.data.uid == request.auth.uid;
+    }
+    
+    // Blocca tutto il resto per sicurezza
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
