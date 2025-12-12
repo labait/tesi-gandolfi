@@ -1,0 +1,19 @@
+{
+	"info": {
+		"_postman_id": "dff027f9-a053-4ea7-94b4-089460d27b2b",
+		"name": "nofomo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10855",
+		"_collection_link": "https://antomoli.postman.co/workspace/tesi-gandolfi~c4518772-18b1-409b-a53a-3d853156e1de/collection/10855-dff027f9-a053-4ea7-94b4-089460d27b2b?action=share&source=collection_link&creator=10855"
+	},
+	"item": [
+		{
+			"name": "analyze",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
