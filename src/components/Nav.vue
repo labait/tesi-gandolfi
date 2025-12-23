@@ -17,8 +17,25 @@ onMounted(() => {
 const loginWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleProvider)
+    // Redirect to profile after successful login
+    router.push('/profile')
   } catch (error) {
     console.error('Errore durante il login:', error)
+    let errorMessage = 'Errore durante il login'
+    
+    if (error.code === 'auth/popup-closed-by-user') {
+      errorMessage = 'Login annullato. Riprova.'
+    } else if (error.code === 'auth/popup-blocked') {
+      errorMessage = 'Popup bloccato. Abilita i popup per questo sito.'
+    } else if (error.code === 'auth/network-request-failed') {
+      errorMessage = 'Errore di connessione. Controlla la tua connessione internet.'
+    } else if (error.code === 'auth/invalid-action-code') {
+      errorMessage = 'Il link di autenticazione non è valido o è scaduto.'
+    } else if (error.message) {
+      errorMessage = error.message
+    }
+    
+    alert(errorMessage)
   }
 }
 

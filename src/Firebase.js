@@ -25,6 +25,15 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
+// Add additional scopes if needed
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
+
+// Set custom parameters
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
 // Initialize Firestore
 const db = getFirestore(app);
 
