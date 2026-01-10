@@ -3,6 +3,7 @@ import Homepage from '../views/Homepage.vue'
 import Search from '../views/Search.vue'
 import Profile from '../views/Profile.vue'
 import AuthAction from '../views/AuthAction.vue'
+import Project from '../views/Project.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/profile',
       name: 'Profile',
       component: Profile
+    },
+    {
+      path: '/project/:id',
+      name: 'Project',
+      component: Project
     },
     {
       path: '/auth/action',

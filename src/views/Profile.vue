@@ -26,10 +26,11 @@ const loadProjects = async (userId) => {
     
     const querySnapshot = await getDocs(q)
     
-    // Trasforma i progetti in oggetti con title e image
+    // Trasforma i progetti in oggetti con title, image e id
     projects.value = querySnapshot.docs.map((doc) => {
       const data = doc.data()
       return {
+        id: doc.id,
         title: data.titolo || '',
         image: data.immagine || '',
         alt: data.titolo || 'Progetto'

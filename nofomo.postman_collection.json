@@ -4,7 +4,7 @@
 		"name": "nofomo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "10855",
-		"_collection_link": "https://antomoli.postman.co/workspace/moodpin~331bf78c-4caa-46f6-a6cd-b232888ca58c/collection/10855-18868728-d5d9-4d67-80b9-004dbdc26833?action=share&source=collection_link&creator=10855"
+		"_collection_link": "https://antomoli.postman.co/workspace/nofomo~331bf78c-4caa-46f6-a6cd-b232888ca58c/collection/10855-18868728-d5d9-4d67-80b9-004dbdc26833?action=share&source=collection_link&creator=10855"
 	},
 	"item": [
 		{
@@ -73,6 +73,56 @@
 				{
 					"name": "search",
 					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "grant_type",
+									"value": "authorization_code",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://www.pinterest.com/oauth",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "1523933",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "user_account:read,pins:read,boards:read",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://api.pinterest.com/v5/oauth/token",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Pinterest API v5",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {

@@ -67,7 +67,7 @@ const goToProfile = () => {
         @click="goToProfile"
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        Profile
+        My Projects
       </button>
       <img
         v-if="false"
