@@ -53,7 +53,7 @@ const handleAnalyze = async () => {
 
   isAnalyzing.value = true
   error.value = null
-  global.value.loading = true
+  global.value.loading = 'Analyzing image...'
   try {
     // Send image URL to Netlify function
     // The function will download the image server-side (no CORS issues)
