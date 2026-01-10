@@ -14,6 +14,7 @@ const project = ref(null)
 const error = ref(null)
 const isAnalyzing = ref(false)
 const global = inject('global')
+const openLightbox = inject('openLightbox')
 
 const search_text = computed(() => {
   return project.value?.analysis?.search_text || null
@@ -264,6 +265,13 @@ const relatedImages = computed(() => {
     alt: 'Related image'
   })) || []
 })
+
+// Handle zoom event from Search and List components
+const handleItemZoom = (item) => {
+  if (item.image && openLightbox) {
+    openLightbox(item.image)
+  }
+}
 </script>
 
 <template>
@@ -307,7 +315,17 @@ const relatedImages = computed(() => {
 
     <div v-if="relatedImages.length > 0" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Related images</h2>
-      <List :items="relatedImages" :allow-bookmark="true" :allow-add="true" :is-bookmarked-fn="isBookmarked" :is-add-fn="isAdded" @item-bookmarked="handleItemBookmarked" @item-added="handleItemAdded" />
+      <List 
+        :items="relatedImages" 
+        :allow-bookmark="true" 
+        :allow-add="true"
+        :allow-zoom="true"
+        :is-bookmarked-fn="isBookmarked" 
+        :is-add-fn="isAdded" 
+        @item-bookmarked="handleItemBookmarked" 
+        @item-added="handleItemAdded"
+        @item-zoom="handleItemZoom"
+      />
     </div>
 
     <div v-if="project && project.analysis" class="mb-8">
@@ -339,10 +357,12 @@ const relatedImages = computed(() => {
           :initial-query="project.analysis.search_text"
           :allow-bookmark="true"
           :allow-add="true"
+          :allow-zoom="true"
           :is-bookmarked-fn="isBookmarked"
           :is-add-fn="isAdded"
           @item-bookmarked="handleItemBookmarked"
           @item-added="handleItemAdded"
+          @item-zoom="handleItemZoom"
         />
       </div>
       <div v-else>

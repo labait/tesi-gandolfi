@@ -1,17 +1,23 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import Search from '../components/Search.vue'
 
-
 const user = ref(null)
+const openLightbox = inject('openLightbox')
 
 onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     user.value = currentUser
   })
 })
+
+const handleItemZoom = (item) => {
+  if (item.image && openLightbox) {
+    openLightbox(item.image)
+  }
+}
 
 const items = Array(20).fill().map( (i, index) => {
   return {
@@ -23,7 +29,12 @@ console.log(items)
 </script>
 
 <template>
-  <Search :auto-search="true" initial-query="helvetica red poster" />
+  <Search 
+    :auto-search="true" 
+    initial-query="helvetica red poster"
+    :allow-zoom="true"
+    @item-zoom="handleItemZoom"
+  />
 </template>
 
 

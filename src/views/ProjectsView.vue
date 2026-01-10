@@ -52,7 +52,7 @@ const handleItemDeleted = async (deletedItemId) => {
     await deleteDoc(projectRef)
     
     // Remove deleted project from local list
-    projects.value = projects.value.filter(item => item.id !== deletedItemId)
+  projects.value = projects.value.filter(item => item.id !== deletedItemId)
     // Reload projects to ensure list is synchronized
     if (user.value) {
       loadProjects(user.value.uid)
@@ -75,7 +75,7 @@ const handleProjectSaved = () => {
   refreshProjects()
 }
 
-  onMounted(() => {
+onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     user.value = currentUser
     if (currentUser) {

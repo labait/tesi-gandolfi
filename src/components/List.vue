@@ -2,7 +2,7 @@
 import { ref, inject, defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import DialogBox from './DialogBox.vue'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { BookmarkIcon as BookmarkIconSolid } from '@heroicons/vue/24/solid'
 import { BookmarkIcon as BookmarkIconOutline } from '@heroicons/vue/24/outline'
 import { TrashIcon } from '@heroicons/vue/24/outline'
@@ -31,13 +31,18 @@ const props = defineProps({
   isAddFn: {
     type: Function,
     default: null
+  },
+  allowZoom: {
+    type: Boolean,
+    default: false
   }
 })
 
 const emit = defineEmits([
   'item-deleted',
   'item-added',
-  'item-bookmarked'
+  'item-bookmarked',
+  'item-zoom'
 ])
 
 const router = useRouter()
@@ -115,6 +120,17 @@ const handleAddClick = (e, item) => {
   emit('item-added', item)
 }
 
+const handleZoomClick = (e, item) => {
+  e.stopPropagation() // Prevents click on item box
+  
+  if (!item.image) {
+    return
+  }
+  
+  // Emit event to parent component
+  emit('item-zoom', item)
+}
+
 </script>
 
 <template>
@@ -166,6 +182,16 @@ const handleAddClick = (e, item) => {
         >
           <BookmarkIconSolid v-if="isBookmarked(item)" class="w-5 h-5 text-blue-600" />
           <BookmarkIconOutline v-else class="w-5 h-5 text-gray-700" />
+        </button>
+        
+        <!-- Zoom Icon (sempre visibile se allowZoom è true) -->
+        <button
+          v-if="allowZoom"
+          @click="handleZoomClick($event, item)"
+          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer opacity-100"
+          title="Zoom image"
+        >
+          <MagnifyingGlassIcon class="w-5 h-5 text-gray-700" />
         </button>
       </div>
       

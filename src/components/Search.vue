@@ -33,13 +33,18 @@
     isAddFn: {
       type: Function,
       default: null
+    },
+    allowZoom: {
+      type: Boolean,
+      default: false
     }
   })
   
   const emit = defineEmits([
     'item-deleted',
     'item-bookmarked',
-    'item-added'
+    'item-added',
+    'item-zoom'
   ])
   
   const global = inject('global')
@@ -178,6 +183,10 @@
     emit('item-added', item)
   }
 
+  const handleItemZoom = (item) => {
+    emit('item-zoom', item)
+  }
+
   // Initialize search query from prop and perform search if provided
   onMounted(() => {
     if (props.autoSearch) handleSearch();
@@ -239,11 +248,13 @@
         :allow-delete="allowDelete"
         :allow-bookmark="allowBookmark"
         :allow-add="allowAdd"
+        :allow-zoom="allowZoom"
         :is-bookmarked-fn="isBookmarkedFn"
         :is-add-fn="isAddFn"
         @item-deleted="handleItemDeleted"
         @item-bookmarked="handleItemBookmarked"
         @item-added="handleItemAdded"
+        @item-zoom="handleItemZoom"
       />
     </div>
 
