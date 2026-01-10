@@ -3,9 +3,10 @@
     <!-- Pulsante per aprire la modale -->
     <button
       @click="openModal"
-      class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
     >
-      Nuovo Progetto
+      <PlusIcon class="w-5 h-5" />
+      <span>Nuovo Progetto</span>
     </button>
 
     <!-- Modale -->
@@ -135,6 +136,7 @@ import { ref, computed } from 'vue'
 import { auth, db, storage } from '../Firebase'
 import { collection, addDoc } from 'firebase/firestore'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(['project-saved'])
 

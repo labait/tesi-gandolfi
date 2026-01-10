@@ -29,6 +29,12 @@ const router = createRouter({
       name: 'Homepage',
       component: Homepage,
       beforeEnter: async (to, from, next) => {
+        // Se c'è un query parameter 'force', mostra sempre la Homepage (utile per il click sul logo)
+        if (to.query.force === 'true') {
+          next()
+          return
+        }
+        
         // Controlla se l'utente è loggato
         const user = await getCurrentUser()
         if (user) {

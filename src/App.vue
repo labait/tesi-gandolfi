@@ -1,10 +1,12 @@
 <script setup>
 import { ref, provide, onMounted } from 'vue'
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import Nav from './components/Nav.vue'
 import { auth, db } from './Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
+
+const router = useRouter()
 
 // Oggetto globale che contiene tutti gli stati condivisi
 const global = ref({
@@ -69,14 +71,22 @@ onMounted(() => {
 
 // Esponi l'oggetto global tramite provide
 provide('global', global)
+
+const goToHomepage = () => {
+  // Naviga sempre alla Homepage, bypassando il guard che reindirizza a /projects
+  router.push({ name: 'Homepage', query: { force: 'true' } })
+}
 </script>
 
 <template>
   <div class="min-h-screen">
     <main class="container mx-auto">
-      <RouterLink to="/" class="block">
-        <h1 class="text-4xl font-bold text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity">nofomo</h1>
-      </RouterLink>
+      <h1 
+        @click="goToHomepage"
+        class="text-4xl font-bold text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
+      >
+        nofomo
+      </h1>
       <Nav />
       <pre class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
