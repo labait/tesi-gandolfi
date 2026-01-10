@@ -93,17 +93,26 @@ const handleAnalyze = async () => {
       analysisResult = data.result
     }
 
-    // Update project with analysis
+    // Add timestamp to analysis
+    const analysisWithTimestamp = {
+      ...analysisResult,
+      analyzedAt: new Date().toISOString()
+    }
+
+    // Update project with analysis on Firebase
     if (project.value?.id) {
       const projectRef = doc(db, 'projects', project.value.id)
       await updateDoc(projectRef, {
-        analysis: analysisResult
+        analysis: analysisWithTimestamp,
+        updatedAt: new Date().toISOString()
       })
       
       // Update local project
-      project.value.analysis = analysisResult
+      project.value.analysis = analysisWithTimestamp
       // Update global.project as well
       global.value.project = { ...project.value }
+      
+      console.log('Analysis saved successfully to Firebase')
     }
 
   } catch (err) {
@@ -174,14 +183,47 @@ onBeforeUnmount(() => {
 
     <div v-if="project && project.analysis" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Analysis</h2>
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold">Graphic style</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.graphic_style }}</p>
+        <h3 class="text-lg font-semibold">Artistic style</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.art_style }}</p>
+        <h3 class="text-lg font-semibold">Font family</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.font_family }}</p>
+        <h3 class="text-lg font-semibold">Chromatic</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.chromatic }}</p>
+        <h3 class="text-lg font-semibold">Colors</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.colors }}</p>
+        <h3 class="text-lg font-semibold">Tags</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.tags }}</p>
+        <h3 class="text-lg font-semibold">Description</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.description }}</p>
+        <h3 class="text-lg font-semibold">Review</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.review }}</p>
+        <h3 class="text-lg font-semibold">Visual analysis</h3>
+        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.visual_analysis }}</p>
+      </div>
       <pre v-if="global.debug" class="text-md overflow-x-auto max-w-full max-h-[50vh] overflow-y-auto">{{ JSON.stringify(project.analysis, null, 2) }}</pre>
     </div>
 
-    <div v-if="search_text" class="mb-8"> 
-      <Search :auto-search="true" :initial-query="project.analysis.search_text" />
+    <div v-if="project?.analysis.colors" class="mb-8">
+      <h2 class="text-2xl font-semibold mb-2">Color palette</h2>
+      <div class="flex flex-wrap gap-2">
+        <div v-for="color in project.analysis.colors.split(',').map(color => color.trim())" :key="color" class="flex items-center gap-2 flex-col">
+          <div class="w-20 h-20" :style="{ backgroundColor: color }"></div>
+          <span>{{ color }}</span>
+        </div>
+      </div>
     </div>
-    <div v-else>
-      Analyze the source image to get inspiration for your search.
+
+    <div>
+      <h2 class="text-2xl font-semibold mb-4">Search images</h2>
+      <div v-if="search_text" class="mb-8"> 
+        <Search :auto-search="true" :initial-query="project.analysis.search_text" />
+      </div>
+      <div v-else>
+        Analyze the source image to get inspiration for your search.
+      </div>
     </div>
 
   </div>
