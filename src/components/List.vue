@@ -39,9 +39,12 @@ const dialogMessage = ref('')
 const itemToDelete = ref(null)
 
 const handleItemClick = (item) => {
-  if (item.id) {
+  // Only navigate if id looks like a Firebase document ID (not a URL)
+  // Firebase IDs are typically alphanumeric and not URLs
+  if (item.id && !item.id.startsWith('http') && !item.id.startsWith('result-')) {
     router.push(`/project/${item.id}`)
   }
+  // For search results (which have URLs as ids), do nothing on click
 }
 
 const handleDeleteClick = (e, item) => {

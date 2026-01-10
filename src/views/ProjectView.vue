@@ -167,9 +167,7 @@ onBeforeUnmount(() => {
 
     <div v-if="project && project.analysis" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Analysis</h2>
-      <div class="bg-gray-100 rounded-lg p-4 overflow-auto">
-        <pre class="text-md">{{ JSON.stringify(project.analysis, null, 2) }}</pre>
-      </div>
+      <pre v-if="global.debug" class="text-md overflow-x-auto max-w-full max-h-[50vh] overflow-y-auto">{{ JSON.stringify(project.analysis, null, 2) }}</pre>
     </div>
 
   </div>
