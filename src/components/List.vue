@@ -138,7 +138,7 @@ const handleAddClick = (e, item) => {
       v-for="item in items" 
       :key="item.id || item.image" 
       @click="handleItemClick(item)"
-      class="relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
+      class="max-h-64 relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
       <div v-if="allowDelete || allowBookmark || allowAdd" class="absolute top-2 right-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
