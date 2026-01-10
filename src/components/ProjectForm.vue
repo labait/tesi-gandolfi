@@ -6,13 +6,13 @@
     @click.self="closeModal"
   >
       <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 class="text-2xl font-bold mb-6">Nuovo Progetto</h2>
+        <h2 class="text-2xl font-bold mb-6">New Project</h2>
 
         <form @submit.prevent="saveProject" class="space-y-6">
-          <!-- Titolo Progetto (obbligatorio) -->
+          <!-- Project Title (required) -->
           <div>
             <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
-              Titolo Progetto <span class="text-red-500">*</span>
+              Project Title <span class="text-red-500">*</span>
             </label>
             <input
               id="title"
@@ -20,28 +20,28 @@
               type="text"
               required
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Inserisci il titolo del progetto"
+              placeholder="Enter project title"
             />
           </div>
 
-          <!-- Note (opzionali) -->
+          <!-- Notes (optional) -->
           <div>
             <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
-              Note
+              Notes
             </label>
             <textarea
               id="notes"
               v-model="formData.notes"
               rows="4"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Inserisci le note del progetto (opzionale)"
+              placeholder="Enter project notes (optional)"
             ></textarea>
           </div>
 
-          <!-- Upload Immagine -->
+          <!-- Image Upload -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Immagine di riferimento
+              Reference Image
             </label>
             <div
               class="w-full border-2 border-dashed rounded-lg p-8 text-center transition-colors"
@@ -78,10 +78,10 @@
                 </svg>
                 <div>
                   <p class="text-lg font-medium text-gray-700">
-                    Trascina un'immagine qui o clicca per selezionare
+                    Drag an image here or click to select
                   </p>
                   <p class="text-sm text-gray-500 mt-2">
-                    PNG, JPG, GIF fino a 10MB
+                    PNG, JPG, GIF up to 10MB
                   </p>
                 </div>
               </div>
@@ -89,7 +89,7 @@
               <div v-else class="space-y-4">
                 <img
                   :src="imagePreview"
-                  alt="Anteprima immagine"
+                  alt="Image preview"
                   class="max-h-64 mx-auto rounded-lg shadow-lg"
                 />
                 <p class="text-sm text-gray-600">{{ imageName }}</p>
@@ -97,22 +97,22 @@
             </div>
           </div>
 
-          <!-- Pulsanti -->
+          <!-- Buttons -->
           <div class="flex justify-end gap-4 pt-4">
             <button
               type="button"
               @click="closeModal"
               class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Annulla
+              Cancel
             </button>
             <button
               type="submit"
               :disabled="isSaving || !formData.title"
               class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <span v-if="!isSaving">Salva</span>
-              <span v-else>Salvataggio...</span>
+              <span v-if="!isSaving">Save</span>
+              <span v-else>Saving...</span>
             </button>
           </div>
         </form>
@@ -157,7 +157,7 @@ const closeModal = () => {
   imageFile.value = null
 }
 
-// Espone il metodo openModal per essere chiamato dall'esterno
+// Expose openModal method to be called from outside
 defineExpose({
   openModal
 })
@@ -187,7 +187,7 @@ const handleFileSelect = (e) => {
 
 const processFile = (file) => {
   if (!file.type.startsWith('image/')) {
-    alert('Per favore, seleziona un file immagine')
+    alert('Please select an image file')
     return
   }
 
@@ -213,7 +213,7 @@ const saveProject = async () => {
 
   const currentUser = auth.currentUser
   if (!currentUser) {
-    alert('Devi essere loggato per creare un progetto')
+    alert('You must be logged in to create a project')
     return
   }
 
@@ -222,28 +222,28 @@ const saveProject = async () => {
   try {
     let imageUrl = null
 
-    // Se c'è un'immagine, caricala su Firebase Storage
+    // If there's an image, upload it to Firebase Storage
     if (imageFile.value) {
       try {
-        // Genera un nome file univoco
+        // Generate a unique filename
         const timestamp = Date.now()
         const fileName = `${timestamp}_${imageFile.value.name}`
         const imageRef = storageRef(storage, `projects/${currentUser.uid}/${fileName}`)
         
-        // Carica il file
+        // Upload the file
         await uploadBytes(imageRef, imageFile.value)
         
-        // Ottieni l'URL di download
+        // Get the download URL
         imageUrl = await getDownloadURL(imageRef)
-        console.log('Immagine caricata con successo:', imageUrl)
+        console.log('Image uploaded successfully:', imageUrl)
       } catch (storageError) {
-        console.error('Errore durante il caricamento dell\'immagine:', storageError)
-        // Se c'è un errore con l'upload dell'immagine, continua comunque senza immagine
-        alert('Errore durante il caricamento dell\'immagine. Il progetto verrà salvato senza immagine.')
+        console.error('Error during image upload:', storageError)
+        // If there's an error with image upload, continue without image
+        alert('Error during image upload. The project will be saved without image.')
       }
     }
 
-    // Crea il progetto su Firestore
+    // Create the project in Firestore
     const projectData = {
       uid: currentUser.uid,
       titolo: formData.value.title,
@@ -254,16 +254,16 @@ const saveProject = async () => {
 
     await addDoc(collection(db, 'projects'), projectData)
 
-    // Emetti evento per notificare il componente padre
+    // Emit event to notify parent component
     emit('project-saved')
     
-    // Chiudi la modale
+    // Close modal
     closeModal()
     
-    alert('Progetto creato con successo!')
+    alert('Project created successfully!')
   } catch (error) {
-    console.error('Errore durante il salvataggio del progetto:', error)
-    alert(`Errore durante il salvataggio del progetto: ${error.message}`)
+    console.error('Error during project save:', error)
+    alert(`Error during project save: ${error.message}`)
   } finally {
     isSaving.value = false
   }

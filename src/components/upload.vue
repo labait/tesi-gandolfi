@@ -35,10 +35,10 @@
         </svg>
         <div>
           <p class="text-lg font-medium text-gray-700">
-            Trascina un'immagine qui o clicca per selezionare
+            Drag an image here or click to select
           </p>
           <p class="text-sm text-gray-500 mt-2">
-            PNG, JPG, GIF fino a 10MB
+            PNG, JPG, GIF up to 10MB
           </p>
         </div>
       </div>
@@ -46,7 +46,7 @@
       <div v-else class="space-y-4">
         <img
           :src="imagePreview"
-          alt="Anteprima immagine"
+          alt="Image preview"
           class="max-h-64 mx-auto rounded-lg shadow-lg"
         />
         <p class="text-sm text-gray-600">{{ imageName }}</p>
@@ -59,8 +59,8 @@
       :disabled="isAnalyzing"
       class="mt-8 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <span v-if="!isAnalyzing">Analizza Immagine</span>
-      <span v-else>Analisi in corso...</span>
+      <span v-if="!isAnalyzing">Analyze Image</span>
+      <span v-else>Analyzing...</span>
     </button>
   </div>
 </template>
@@ -102,7 +102,7 @@ const handleFileSelect = (e) => {
 
 const processFile = (file) => {
   if (!file.type.startsWith('image/')) {
-    alert('Per favore, seleziona un file immagine')
+    alert('Please select an image file')
     return
   }
 
@@ -123,18 +123,18 @@ const triggerFileInput = () => {
 
 const analyze = async () => {
   if (!imageFile.value) {
-    console.error('Nessuna immagine selezionata')
+    console.error('No image selected')
     return
   }
 
   isAnalyzing.value = true
 
   try {
-    // Crea FormData per inviare l'immagine
+    // Create FormData to send the image
     const formData = new FormData()
     formData.append('image', imageFile.value)
 
-    // Chiama la funzione serverless di Netlify
+    // Call Netlify serverless function
     const response = await fetch('/.netlify/functions/analyze', {
       method: 'POST',
       body: formData
@@ -142,14 +142,14 @@ const analyze = async () => {
 
     if (!response.ok) {
       const errorText = await response.text()
-      throw new Error(`Errore: ${response.status} - ${errorText}`)
+      throw new Error(`Error: ${response.status} - ${errorText}`)
     }
 
     const data = await response.json()
     console.log('Output:', data)
     
   } catch (error) {
-    console.error('Errore durante l\'analisi:', error)
+    console.error('Error during analysis:', error)
   } finally {
     isAnalyzing.value = false
   }

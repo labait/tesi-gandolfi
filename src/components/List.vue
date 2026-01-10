@@ -45,9 +45,9 @@ const handleItemClick = (item) => {
 }
 
 const handleDeleteClick = (e, item) => {
-  e.stopPropagation() // Previene il click sul box item
+  e.stopPropagation() // Prevents click on item box
   itemToDelete.value = item
-  dialogMessage.value = `Sei sicuro di voler eliminare il progetto "${item.title || 'questo progetto'}"?`
+  dialogMessage.value = `Are you sure you want to delete the project "${item.title || 'this project'}"?`
   showDialog.value = true
 }
 
@@ -61,14 +61,14 @@ const confirmDelete = async () => {
     const projectRef = doc(db, 'projects', itemToDelete.value.id)
     await deleteDoc(projectRef)
     
-    // Emetti evento per notificare il componente padre
+    // Emit event to notify parent component
     emit('item-deleted', itemToDelete.value.id)
     
     showDialog.value = false
     itemToDelete.value = null
   } catch (error) {
-    console.error('Errore durante la cancellazione del progetto:', error)
-    alert('Errore durante la cancellazione del progetto')
+    console.error('Error deleting project:', error)
+    alert('Error deleting project')
     showDialog.value = false
   }
 }
@@ -79,7 +79,7 @@ const cancelDelete = () => {
 }
 
 const handleBookmarkClick = async (e, item) => {
-  e.stopPropagation() // Previene il click sul box item
+  e.stopPropagation() // Prevents click on item box
   
   if (!global?.value?.account?.id || !item.image) {
     return
@@ -89,28 +89,28 @@ const handleBookmarkClick = async (e, item) => {
     const accountRef = doc(db, 'accounts', global.value.account.id)
     const currentBookmarks = global.value.account.bookmarks || []
     
-    // Controlla se l'immagine è già nei bookmarks
+    // Check if image is already bookmarked
     const isBookmarked = currentBookmarks.includes(item.image)
     
     let updatedBookmarks
     if (isBookmarked) {
-      // Rimuovi il bookmark
+      // Remove bookmark
       updatedBookmarks = currentBookmarks.filter(url => url !== item.image)
     } else {
-      // Aggiungi il bookmark
+      // Add bookmark
       updatedBookmarks = [...currentBookmarks, item.image]
     }
     
-    // Aggiorna Firestore
+    // Update Firestore
     await updateDoc(accountRef, {
       bookmarks: updatedBookmarks
     })
     
-    // Aggiorna l'oggetto globale
+    // Update global object
     global.value.account.bookmarks = updatedBookmarks
   } catch (error) {
-    console.error('Errore durante l\'aggiornamento dei bookmarks:', error)
-    alert('Errore durante l\'aggiornamento dei bookmarks')
+    console.error('Error updating bookmarks:', error)
+    alert('Error updating bookmarks')
   }
 }
 
@@ -122,7 +122,7 @@ const isBookmarked = (item) => {
 }
 
 const handleAddClick = (e, item) => {
-  e.stopPropagation() // Previene il click sul box item
+  e.stopPropagation() // Prevents click on item box
   console.log(item.image)
 }
 
@@ -139,33 +139,33 @@ const handleAddClick = (e, item) => {
     >
       <!-- Icone in alto a destra -->
       <div v-if="allowDelete || allowBookmark || allowAdd" class="absolute top-2 right-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <!-- Icona Plus -->
+        <!-- Plus Icon -->
         <button
           v-if="allowAdd"
           @click="handleAddClick($event, item)"
           class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Aggiungi"
+          title="Add"
         >
           <PlusIcon class="w-5 h-5 text-green-600" />
         </button>
         
-        <!-- Icona Bookmark -->
+        <!-- Bookmark Icon -->
         <button
           v-if="allowBookmark"
           @click="handleBookmarkClick($event, item)"
           class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          :title="isBookmarked(item) ? 'Rimuovi dai bookmark' : 'Aggiungi ai bookmark'"
+          :title="isBookmarked(item) ? 'Remove from bookmarks' : 'Add to bookmarks'"
         >
           <BookmarkIconSolid v-if="isBookmarked(item)" class="w-5 h-5 text-blue-600" />
           <BookmarkIconOutline v-else class="w-5 h-5 text-gray-700" />
         </button>
         
-        <!-- Icona Trash -->
+        <!-- Trash Icon -->
         <button
           v-if="allowDelete"
           @click="handleDeleteClick($event, item)"
           class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Elimina progetto"
+          title="Delete project"
         >
           <TrashIcon class="w-5 h-5 text-red-600" />
         </button>
@@ -178,10 +178,10 @@ const handleAddClick = (e, item) => {
     </div>
   </div>
   
-  <!-- DialogBox per conferma eliminazione -->
+  <!-- DialogBox for delete confirmation -->
   <DialogBox
     :show="showDialog"
-    title="Conferma eliminazione"
+    title="Confirm Deletion"
     :message="dialogMessage"
     @confirm="confirmDelete"
     @cancel="cancelDelete"
