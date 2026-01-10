@@ -1,7 +1,7 @@
 # Firebase API Key Setup Instructions
 
 ## Issue
-Error: "Requests from referer https://nofomo-36b6c.firebaseapp.com/ are blocked"
+Error: "Requests from referer https://prisma-site.netlify.app are blocked"
 
 ## Solution
 The API key has HTTP referrer restrictions that need to be updated in Google Cloud Console.

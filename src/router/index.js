@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Homepage from '../views/Homepage.vue'
-import Search from '../views/Search.vue'
-import Projects from '../views/Projects.vue'
-import AuthAction from '../views/AuthAction.vue'
-import Project from '../views/Project.vue'
+import HomepageView from '../views/HomepageView.vue'
+import SearchView from '../views/SearchView.vue'
+import ProjectsView from '../views/ProjectsView.vue'
+import AuthActionView from '../views/AuthActionView.vue'
+import ProjectView from '../views/ProjectView.vue'
 import { auth } from '../Firebase'
 
 // Helper function per controllare lo stato di autenticazione
@@ -27,8 +27,14 @@ const router = createRouter({
     {
       path: '/',
       name: 'Homepage',
-      component: Homepage,
+      component: HomepageView,
       beforeEnter: async (to, from, next) => {
+        // Se c'è un query parameter 'force', mostra sempre la Homepage (utile per il click sul logo)
+        if (to.query.force === 'true') {
+          next()
+          return
+        }
+        
         // Controlla se l'utente è loggato
         const user = await getCurrentUser()
         if (user) {
@@ -43,22 +49,22 @@ const router = createRouter({
     {
       path: '/search',
       name: 'Search',
-      component: Search
+      component: SearchView
     },
     {
       path: '/projects',
       name: 'Projects',
-      component: Projects
+      component: ProjectsView
     },
     {
       path: '/project/:id',
       name: 'Project',
-      component: Project
+      component: ProjectView
     },
     {
       path: '/auth/action',
       name: 'AuthAction',
-      component: AuthAction
+      component: AuthActionView
     }
   ]
 })

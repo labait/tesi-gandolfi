@@ -1,18 +1,29 @@
 <script setup>
 import { ref, provide, onMounted } from 'vue'
-import { RouterView, RouterLink } from 'vue-router'
-import Nav from './components/Nav.vue'
+import { RouterView, useRouter } from 'vue-router'
+
 import { auth, db } from './Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
-// Oggetto globale che contiene tutti gli stati condivisi
+import Nav from './components/Nav.vue'
+import ProjectForm from './components/ProjectForm.vue'
+import Loading from './components/Loading.vue'
+
+const router = useRouter()
+const projectFormRef = ref(null)
+
+// Global object containing all shared states
 const global = ref({
+  debug: false,
+  loading: null,
   account: null,
   project: null
 })
 
-// Funzione helper per creare o ottenere l'account dell'utente
+
+
+// Helper function to create or get user account
 const ensureAccount = async (uid) => {
   if (!uid) {
     global.value.account = null
@@ -24,13 +35,13 @@ const ensureAccount = async (uid) => {
     const accountSnap = await getDoc(accountRef)
 
     if (accountSnap.exists()) {
-      // L'account esiste già, caricalo
+      // Account exists, load it
       global.value.account = {
         id: accountSnap.id,
         ...accountSnap.data()
       }
     } else {
-      // L'account non esiste, crealo
+      // Account doesn't exist, create it
       const newAccount = {
         uid: uid,
         bookmarks: [],
@@ -39,7 +50,7 @@ const ensureAccount = async (uid) => {
       
       await setDoc(accountRef, newAccount)
       
-      // Carica l'account appena creato
+      // Load the newly created account
       global.value.account = {
         id: accountRef.id,
         ...newAccount
@@ -48,38 +59,69 @@ const ensureAccount = async (uid) => {
 
     return global.value.account
   } catch (error) {
-    console.error('Errore durante il caricamento/creazione dell\'account:', error)
+    console.error('Error loading/creating account:', error)
     global.value.account = null
     return null
   }
 }
 
-// Gestisci lo stato di autenticazione e carica l'account
+// Handle authentication state and load account
 onMounted(() => {
+  // global.debug = true if query param debug is present
+  if (window.location.search.includes('debug')) {
+    global.value.debug = true
+  }
+
+
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      // Utente loggato, assicurati che esista l'account e caricalo
+      // User logged in, ensure account exists and load it
       await ensureAccount(user.uid)
     } else {
-      // Utente non loggato, resetta l'account
+      // User not logged in, reset account
       global.value.account = null
     }
   })
 })
 
-// Esponi l'oggetto global tramite provide
+// Expose global object via provide
 provide('global', global)
+
+// Function to open project modal
+const openProjectModal = () => {
+  projectFormRef.value?.openModal()
+}
+
+// Expose function to open modal via provide
+provide('openProjectModal', openProjectModal)
+
+const goToHomepage = () => {
+  // Always navigate to Homepage, bypassing guard that redirects to /projects
+  router.push({ name: 'Homepage', query: { force: 'true' } })
+}
+
+const handleProjectSaved = () => {
+  // Event emitted when a project is saved
+  // Emit custom event to notify other components
+  window.dispatchEvent(new CustomEvent('project-saved'))
+}
 </script>
 
 <template>
-  <div class="min-h-screen">
-    <main class="container mx-auto">
-      <RouterLink to="/" class="block">
-        <h1 class="text-4xl font-bold text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity">nofomo</h1>
-      </RouterLink>
+  <Loading v-if="global.loading" />
+  <div v-show="!global.loading" class="min-h-screen">
+    <main class="container mx-auto px-4 py-8">
+      <h1 
+        @click="goToHomepage"
+        class="font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
+      >
+        prisma
+      </h1>
       <Nav />
-      <pre class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
+      <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
+      <!-- Hidden ProjectForm, used only for modal -->
+      <ProjectForm ref="projectFormRef" @project-saved="handleProjectSaved" />
     </main>
   </div>
 </template>

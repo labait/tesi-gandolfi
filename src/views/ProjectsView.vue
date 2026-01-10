@@ -1,9 +1,8 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, onUnmounted } from 'vue'
 import { auth, db } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, query, where, getDocs } from 'firebase/firestore'
-import ProjectForm from '../components/ProjectForm.vue'
 import List from '../components/List.vue'
 
 const user = ref(null)
@@ -20,7 +19,7 @@ const loadProjects = async (userId) => {
 
   isLoading.value = true
   try {
-    // Query per ottenere solo i progetti dell'utente corrente
+    // Query to get only the current user's projects
     const q = query(
       collection(db, 'projects'),
       where('uid', '==', userId)
@@ -28,18 +27,18 @@ const loadProjects = async (userId) => {
     
     const querySnapshot = await getDocs(q)
     
-    // Trasforma i progetti in oggetti con title, image e id
+    // Transform projects into objects with title, image and id
     projects.value = querySnapshot.docs.map((doc) => {
       const data = doc.data()
       return {
         id: doc.id,
         title: data.titolo || '',
         image: data.immagine || '',
-        alt: data.titolo || 'Progetto'
+        alt: data.titolo || 'Project'
       }
     })
   } catch (error) {
-    console.error('Errore durante il caricamento dei progetti:', error)
+    console.error('Error loading projects:', error)
     projects.value = []
   } finally {
     isLoading.value = false
@@ -47,15 +46,27 @@ const loadProjects = async (userId) => {
 }
 
 const handleItemDeleted = (deletedItemId) => {
-  // Rimuovi il progetto eliminato dalla lista locale
+  // Remove deleted project from local list
   projects.value = projects.value.filter(item => item.id !== deletedItemId)
-  // Ricarica i progetti per assicurarsi che la lista sia sincronizzata
+  // Reload projects to ensure list is synchronized
   if (user.value) {
     loadProjects(user.value.uid)
   }
 }
 
-onMounted(() => {
+// Function to reload projects when a new project is saved
+const refreshProjects = () => {
+  if (user.value) {
+    loadProjects(user.value.uid)
+  }
+}
+
+// Listener for custom project-saved event
+const handleProjectSaved = () => {
+  refreshProjects()
+}
+
+  onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     user.value = currentUser
     if (currentUser) {
@@ -64,19 +75,22 @@ onMounted(() => {
       projects.value = []
     }
   })
+  
+  // Listen for custom project-saved event emitted from App.vue
+  window.addEventListener('project-saved', handleProjectSaved)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('project-saved', handleProjectSaved)
 })
 </script>
 
 <template>
   <div>
-    <h1>Projects</h1>
-    <div v-if="user" class="mt-6 flex justify-center">
-      <ProjectForm @project-saved="loadProjects(user.uid)" />
-    </div>
-
+    <div class="text-4xl font-bold mb-6">List of Projects</div>
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
-        <p class="text-gray-600">Caricamento progetti...</p>
+        <p class="text-gray-600">Loading projects...</p>
       </div>
       <div v-else-if="projects.length > 0">
         <List 
@@ -88,11 +102,11 @@ onMounted(() => {
         />
       </div>
       <div v-else class="text-center py-8">
-        <p class="text-gray-600">Nessun progetto trovato. Crea il tuo primo progetto!</p>
+        <p class="text-gray-600">No projects found. Create your first project!</p>
       </div>
     </div>
     <div v-else class="mt-8 text-center py-8">
-      <p class="text-gray-600">Effettua il login per vedere i tuoi progetti</p>
+      <p class="text-gray-600">Please log in to see your projects</p>
     </div>
   </div>
 </template>

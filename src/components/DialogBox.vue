@@ -4,7 +4,7 @@ import { defineProps, defineEmits } from 'vue'
 const props = defineProps({
   title: {
     type: String,
-    default: 'Conferma'
+    default: 'Confirm'
   },
   message: {
     type: String,
@@ -41,13 +41,13 @@ const handleCancel = () => {
           @click="handleCancel"
           class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
         >
-          Annulla
+          Cancel
         </button>
         <button
           @click="handleConfirm"
           class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          Conferma
+          Confirm
         </button>
       </div>
     </div>
