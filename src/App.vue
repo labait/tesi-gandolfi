@@ -109,7 +109,7 @@ const handleProjectSaved = () => {
 
 <template>
   <Loading v-if="global.loading" />
-  <div v-show="!global.loading" class="min-h-screen">
+  <div class="min-h-screen">
     <main class="container mx-auto px-4 py-8">
       <h1 
         @click="goToHomepage"
