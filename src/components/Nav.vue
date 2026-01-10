@@ -1,11 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { auth, googleProvider } from '../Firebase'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
+import { PlusIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const user = ref(null)
+const openProjectModal = inject('openProjectModal')
 
 onMounted(() => {
   // Ascolta i cambiamenti dello stato di autenticazione
@@ -63,6 +65,16 @@ const goToProjects = () => {
       </button>
     </div>
     <div v-else class="flex items-center gap-3">
+      <!-- Pulsante Nuovo Progetto (primo elemento) -->
+      <button
+        v-if="openProjectModal"
+        @click="openProjectModal"
+        class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
+      >
+        <PlusIcon class="w-5 h-5" />
+        <span>Nuovo Progetto</span>
+      </button>
+      
       <button
         @click="goToProjects"
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

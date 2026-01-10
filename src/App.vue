@@ -2,11 +2,13 @@
 import { ref, provide, onMounted } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import Nav from './components/Nav.vue'
+import ProjectForm from './components/ProjectForm.vue'
 import { auth, db } from './Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 const router = useRouter()
+const projectFormRef = ref(null)
 
 // Oggetto globale che contiene tutti gli stati condivisi
 const global = ref({
@@ -72,9 +74,23 @@ onMounted(() => {
 // Esponi l'oggetto global tramite provide
 provide('global', global)
 
+// Funzione per aprire la modale del progetto
+const openProjectModal = () => {
+  projectFormRef.value?.openModal()
+}
+
+// Esponi la funzione per aprire la modale tramite provide
+provide('openProjectModal', openProjectModal)
+
 const goToHomepage = () => {
   // Naviga sempre alla Homepage, bypassando il guard che reindirizza a /projects
   router.push({ name: 'Homepage', query: { force: 'true' } })
+}
+
+const handleProjectSaved = () => {
+  // Evento emesso quando un progetto viene salvato
+  // Emetti un evento custom per notificare altri componenti
+  window.dispatchEvent(new CustomEvent('project-saved'))
 }
 </script>
 
@@ -90,6 +106,8 @@ const goToHomepage = () => {
       <Nav />
       <pre class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
+      <!-- ProjectForm nascosto, usato solo per la modale -->
+      <ProjectForm ref="projectFormRef" @project-saved="handleProjectSaved" />
     </main>
   </div>
 </template>

@@ -1,20 +1,10 @@
 <template>
-  <div>
-    <!-- Pulsante per aprire la modale -->
-    <button
-      @click="openModal"
-      class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
-    >
-      <PlusIcon class="w-5 h-5" />
-      <span>Nuovo Progetto</span>
-    </button>
-
-    <!-- Modale -->
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="closeModal"
-    >
+  <!-- Modale -->
+  <div
+    v-if="isModalOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    @click.self="closeModal"
+  >
       <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <h2 class="text-2xl font-bold mb-6">Nuovo Progetto</h2>
 
@@ -128,15 +118,13 @@
         </form>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, defineExpose } from 'vue'
 import { auth, db, storage } from '../Firebase'
 import { collection, addDoc } from 'firebase/firestore'
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { PlusIcon } from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(['project-saved'])
 
@@ -168,6 +156,11 @@ const closeModal = () => {
   imageName.value = ''
   imageFile.value = null
 }
+
+// Espone il metodo openModal per essere chiamato dall'esterno
+defineExpose({
+  openModal
+})
 
 const handleDragOver = (e) => {
   isDragging.value = true
@@ -279,4 +272,3 @@ const saveProject = async () => {
 
 <style scoped>
 </style>
-

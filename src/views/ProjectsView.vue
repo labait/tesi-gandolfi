@@ -1,9 +1,8 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, onUnmounted } from 'vue'
 import { auth, db } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, query, where, getDocs } from 'firebase/firestore'
-import ProjectForm from '../components/ProjectForm.vue'
 import List from '../components/List.vue'
 
 const user = ref(null)
@@ -55,6 +54,18 @@ const handleItemDeleted = (deletedItemId) => {
   }
 }
 
+// Funzione per ricaricare i progetti quando un nuovo progetto viene salvato
+const refreshProjects = () => {
+  if (user.value) {
+    loadProjects(user.value.uid)
+  }
+}
+
+// Listener per l'evento custom project-saved
+const handleProjectSaved = () => {
+  refreshProjects()
+}
+
 onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     user.value = currentUser
@@ -64,16 +75,19 @@ onMounted(() => {
       projects.value = []
     }
   })
+  
+  // Ascolta l'evento custom project-saved emesso da App.vue
+  window.addEventListener('project-saved', handleProjectSaved)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('project-saved', handleProjectSaved)
 })
 </script>
 
 <template>
   <div>
     <h1>Projects</h1>
-    <div v-if="user" class="mt-6 flex justify-center">
-      <ProjectForm @project-saved="loadProjects(user.uid)" />
-    </div>
-
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
         <p class="text-gray-600">Caricamento progetti...</p>
