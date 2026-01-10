@@ -18,6 +18,54 @@ const search_text = computed(() => {
   return project.value?.analysis?.search_text || null
 })
 
+// Function to check if an image is bookmarked in the project
+const isBookmarked = (item) => {
+  if (!project.value?.bookmarks || !item.image) {
+    return false
+  }
+  return project.value.bookmarks.includes(item.image)
+}
+
+// Handle bookmark event from Search component
+const handleItemBookmarked = async (item) => {
+  if (!project.value?.id || !item.image) {
+    return
+  }
+
+  try {
+    const projectRef = doc(db, 'projects', project.value.id)
+    const currentBookmarks = project.value.bookmarks || []
+    
+    // Check if image is already bookmarked
+    const isAlreadyBookmarked = currentBookmarks.includes(item.image)
+    
+    let updatedBookmarks
+    if (isAlreadyBookmarked) {
+      // Remove bookmark
+      updatedBookmarks = currentBookmarks.filter(url => url !== item.image)
+    } else {
+      // Add bookmark
+      updatedBookmarks = [...currentBookmarks, item.image]
+    }
+    
+    // Update Firestore
+    await updateDoc(projectRef, {
+      bookmarks: updatedBookmarks,
+      updatedAt: new Date().toISOString()
+    })
+    
+    // Update local project
+    project.value.bookmarks = updatedBookmarks
+    // Update global.project as well
+    global.value.project = { ...project.value }
+    
+    console.log('Bookmarks updated successfully')
+  } catch (error) {
+    console.error('Error updating bookmarks:', error)
+    alert('Error updating bookmarks')
+  }
+}
+
 const loadProject = async () => {
   const projectId = route.params.id
   global.value.loading = 'Loading project...'
@@ -207,7 +255,10 @@ onBeforeUnmount(() => {
       <div v-if="search_text" class="mb-8"> 
         <Search 
           :auto-search="true" 
-          :initial-query="project.analysis.search_text" 
+          :initial-query="project.analysis.search_text"
+          :allow-bookmark="true"
+          :is-bookmarked-fn="isBookmarked"
+          @item-bookmarked="handleItemBookmarked"
         />
       </div>
       <div v-else>

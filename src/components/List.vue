@@ -1,8 +1,6 @@
 <script setup>
 import { ref, inject, defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '../Firebase'
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import DialogBox from './DialogBox.vue'
 import { PlusIcon } from '@heroicons/vue/24/outline'
 import { BookmarkIcon as BookmarkIconSolid } from '@heroicons/vue/24/solid'
@@ -25,10 +23,18 @@ const props = defineProps({
   allowAdd: {
     type: Boolean,
     default: false
+  },
+  isBookmarkedFn: {
+    type: Function,
+    default: null
   }
 })
 
-const emit = defineEmits(['item-deleted'])
+const emit = defineEmits([
+  'item-deleted',
+  'item-added',
+  'item-bookmarked'
+])
 
 const router = useRouter()
 const global = inject('global')
@@ -54,26 +60,17 @@ const handleDeleteClick = (e, item) => {
   showDialog.value = true
 }
 
-const confirmDelete = async () => {
+const confirmDelete = () => {
   if (!itemToDelete.value?.id) {
     showDialog.value = false
     return
   }
 
-  try {
-    const projectRef = doc(db, 'projects', itemToDelete.value.id)
-    await deleteDoc(projectRef)
-    
-    // Emit event to notify parent component
-    emit('item-deleted', itemToDelete.value.id)
-    
-    showDialog.value = false
-    itemToDelete.value = null
-  } catch (error) {
-    console.error('Error deleting project:', error)
-    alert('Error deleting project')
-    showDialog.value = false
-  }
+  // Emit event to parent component to handle deletion
+  emit('item-deleted', itemToDelete.value.id)
+  
+  showDialog.value = false
+  itemToDelete.value = null
 }
 
 const cancelDelete = () => {
@@ -81,52 +78,29 @@ const cancelDelete = () => {
   itemToDelete.value = null
 }
 
-const handleBookmarkClick = async (e, item) => {
+const handleBookmarkClick = (e, item) => {
   e.stopPropagation() // Prevents click on item box
   
-  if (!global?.value?.account?.id || !item.image) {
+  if (!item.image) {
     return
   }
 
-  try {
-    const accountRef = doc(db, 'accounts', global.value.account.id)
-    const currentBookmarks = global.value.account.bookmarks || []
-    
-    // Check if image is already bookmarked
-    const isBookmarked = currentBookmarks.includes(item.image)
-    
-    let updatedBookmarks
-    if (isBookmarked) {
-      // Remove bookmark
-      updatedBookmarks = currentBookmarks.filter(url => url !== item.image)
-    } else {
-      // Add bookmark
-      updatedBookmarks = [...currentBookmarks, item.image]
-    }
-    
-    // Update Firestore
-    await updateDoc(accountRef, {
-      bookmarks: updatedBookmarks
-    })
-    
-    // Update global object
-    global.value.account.bookmarks = updatedBookmarks
-  } catch (error) {
-    console.error('Error updating bookmarks:', error)
-    alert('Error updating bookmarks')
-  }
+  // Emit event to parent component
+  emit('item-bookmarked', item)
 }
 
+// Function to check if item is bookmarked (uses parent function if provided)
 const isBookmarked = (item) => {
-  if (!global?.value?.account?.bookmarks || !item.image) {
-    return false
+  if (props.isBookmarkedFn && typeof props.isBookmarkedFn === 'function') {
+    return props.isBookmarkedFn(item)
   }
-  return global.value.account.bookmarks.includes(item.image)
+  return false
 }
 
 const handleAddClick = (e, item) => {
   e.stopPropagation() // Prevents click on item box
-  console.log(item.image)
+  // Emit event to parent component
+  emit('item-added', item)
 }
 
 </script>

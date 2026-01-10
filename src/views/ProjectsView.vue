@@ -2,7 +2,7 @@
 import { ref, onMounted, inject, onUnmounted } from 'vue'
 import { auth, db } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, deleteDoc } from 'firebase/firestore'
 import List from '../components/List.vue'
 
 const user = ref(null)
@@ -45,12 +45,21 @@ const loadProjects = async (userId) => {
   }
 }
 
-const handleItemDeleted = (deletedItemId) => {
-  // Remove deleted project from local list
-  projects.value = projects.value.filter(item => item.id !== deletedItemId)
-  // Reload projects to ensure list is synchronized
-  if (user.value) {
-    loadProjects(user.value.uid)
+const handleItemDeleted = async (deletedItemId) => {
+  // Handle deletion from List component (after confirmation in DialogBox)
+  try {
+    const projectRef = doc(db, 'projects', deletedItemId)
+    await deleteDoc(projectRef)
+    
+    // Remove deleted project from local list
+    projects.value = projects.value.filter(item => item.id !== deletedItemId)
+    // Reload projects to ensure list is synchronized
+    if (user.value) {
+      loadProjects(user.value.uid)
+    }
+  } catch (error) {
+    console.error('Error deleting project:', error)
+    alert('Error deleting project')
   }
 }
 

@@ -13,8 +13,30 @@
     autoSearch: {
       type: Boolean,
       default: false
+    },
+    allowDelete: {
+      type: Boolean,
+      default: false
+    },
+    allowBookmark: {
+      type: Boolean,
+      default: false
+    },
+    allowAdd: {
+      type: Boolean,
+      default: false
+    },
+    isBookmarkedFn: {
+      type: Function,
+      default: null
     }
   })
+  
+  const emit = defineEmits([
+    'item-deleted',
+    'item-bookmarked',
+    'item-added'
+  ])
   
   const global = inject('global')
   
@@ -139,6 +161,19 @@
     return Math.ceil(currentStartIndex.value / 10)
   })
   
+  // Handle events from List component
+  const handleItemDeleted = (itemId) => {
+    emit('item-deleted', itemId)
+  }
+
+  const handleItemBookmarked = (item) => {
+    emit('item-bookmarked', item)
+  }
+
+  const handleItemAdded = (item) => {
+    emit('item-added', item)
+  }
+
   // Initialize search query from prop and perform search if provided
   onMounted(() => {
     if (props.autoSearch) handleSearch();
@@ -195,7 +230,16 @@
 
     <!-- Results -->
     <div v-if="hasSearched && !global.loading && searchResults.length > 0">
-      <List :items="searchResults" />
+      <List 
+        :items="searchResults" 
+        :allow-delete="allowDelete"
+        :allow-bookmark="allowBookmark"
+        :allow-add="allowAdd"
+        :is-bookmarked-fn="isBookmarkedFn"
+        @item-deleted="handleItemDeleted"
+        @item-bookmarked="handleItemBookmarked"
+        @item-added="handleItemAdded"
+      />
     </div>
 
     <!-- No results message -->
