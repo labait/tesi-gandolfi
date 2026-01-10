@@ -46,6 +46,15 @@ const loadProjects = async (userId) => {
   }
 }
 
+const handleItemDeleted = (deletedItemId) => {
+  // Rimuovi il progetto eliminato dalla lista locale
+  projects.value = projects.value.filter(item => item.id !== deletedItemId)
+  // Ricarica i progetti per assicurarsi che la lista sia sincronizzata
+  if (user.value) {
+    loadProjects(user.value.uid)
+  }
+}
+
 onMounted(() => {
   onAuthStateChanged(auth, (currentUser) => {
     user.value = currentUser
@@ -64,13 +73,19 @@ onMounted(() => {
     <div v-if="user" class="mt-6 flex justify-center">
       <ProjectForm @project-saved="loadProjects(user.uid)" />
     </div>
-    <pre>{{ global }}</pre>
+
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
         <p class="text-gray-600">Caricamento progetti...</p>
       </div>
       <div v-else-if="projects.length > 0">
-        <List :items="projects" />
+        <List 
+          :items="projects" 
+          :allow-delete="true"
+          :allow-bookmark="true"
+          :allow-add="true"
+          @item-deleted="handleItemDeleted"
+        />
       </div>
       <div v-else class="text-center py-8">
         <p class="text-gray-600">Nessun progetto trovato. Crea il tuo primo progetto!</p>

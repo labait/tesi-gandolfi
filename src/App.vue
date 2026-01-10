@@ -8,7 +8,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 // Oggetto globale che contiene tutti gli stati condivisi
 const global = ref({
-  account: null
+  account: null,
+  project: null
 })
 
 // Funzione helper per creare o ottenere l'account dell'utente
@@ -77,6 +78,7 @@ provide('global', global)
         <h1 class="text-4xl font-bold text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity">nofomo</h1>
       </RouterLink>
       <Nav />
+      <pre class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
     </main>
   </div>

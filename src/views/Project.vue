@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { db } from '../Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
@@ -9,6 +9,7 @@ const project = ref(null)
 const isLoading = ref(true)
 const error = ref(null)
 const isAnalyzing = ref(false)
+const global = inject('global')
 
 const loadProject = async () => {
   const projectId = route.params.id
@@ -16,6 +17,7 @@ const loadProject = async () => {
   if (!projectId) {
     error.value = 'ID progetto non valido'
     isLoading.value = false
+    global.value.project = null
     return
   }
 
@@ -31,12 +33,16 @@ const loadProject = async () => {
         id: projectSnap.id,
         ...projectSnap.data()
       }
+      // Valorizza global.project con l'oggetto project
+      global.value.project = project.value
     } else {
       error.value = 'Progetto non trovato'
+      global.value.project = null
     }
   } catch (err) {
     console.error('Errore durante il caricamento del progetto:', err)
     error.value = 'Errore durante il caricamento del progetto'
+    global.value.project = null
   } finally {
     isLoading.value = false
   }
@@ -113,6 +119,8 @@ const handleAnalyze = async () => {
       
       // Aggiorna il progetto locale
       project.value.analysis = analysisResult
+      // Aggiorna anche global.project
+      global.value.project = { ...project.value }
     }
 
   } catch (err) {
@@ -126,6 +134,18 @@ const handleAnalyze = async () => {
 
 onMounted(() => {
   loadProject()
+})
+
+// Watch sulla route per ricaricare il progetto se cambia l'ID
+watch(() => route.params.id, (newId, oldId) => {
+  if (newId !== oldId) {
+    loadProject()
+  }
+})
+
+onBeforeUnmount(() => {
+  // Resetta global.project quando il componente viene smontato
+  global.value.project = null
 })
 </script>
 
@@ -145,11 +165,11 @@ onMounted(() => {
     <div v-else-if="project" class="max-w-4xl mx-auto">
       <h1 class="text-4xl font-bold mb-6">{{ project.titolo || 'Progetto senza titolo' }}</h1>
       
-      <div v-if="project.immagine" class="mb-8">
+      <div v-if="project.immagine" class="mb-8 max-h-[50vh] rounded-lg shadow-lg overflow-hidden flex items-center justify-center bg-gray-100">
         <img 
           :src="project.immagine" 
           :alt="project.titolo || 'Immagine progetto'"
-          class="w-full rounded-lg shadow-lg"
+          class="max-w-full max-h-full w-auto h-auto object-contain"
         />
       </div>
 
