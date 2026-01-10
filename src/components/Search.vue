@@ -29,6 +29,10 @@
     isBookmarkedFn: {
       type: Function,
       default: null
+    },
+    isAddFn: {
+      type: Function,
+      default: null
     }
   })
   
@@ -236,6 +240,7 @@
         :allow-bookmark="allowBookmark"
         :allow-add="allowAdd"
         :is-bookmarked-fn="isBookmarkedFn"
+        :is-add-fn="isAddFn"
         @item-deleted="handleItemDeleted"
         @item-bookmarked="handleItemBookmarked"
         @item-added="handleItemAdded"

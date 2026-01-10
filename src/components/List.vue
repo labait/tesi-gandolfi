@@ -27,6 +27,10 @@ const props = defineProps({
   isBookmarkedFn: {
     type: Function,
     default: null
+  },
+  isAddFn: {
+    type: Function,
+    default: null
   }
 })
 
@@ -97,6 +101,14 @@ const isBookmarked = (item) => {
   return false
 }
 
+// Function to check if item is already added (uses parent function if provided)
+const isAdded = (item) => {
+  if (props.isAddFn && typeof props.isAddFn === 'function') {
+    return props.isAddFn(item)
+  }
+  return false
+}
+
 const handleAddClick = (e, item) => {
   e.stopPropagation() // Prevents click on item box
   // Emit event to parent component
@@ -116,21 +128,10 @@ const handleAddClick = (e, item) => {
     >
       <!-- Icone in alto a destra -->
       <div class="absolute top-2 right-2 z-20 flex gap-2">
-        <!-- Container per Delete e Add (visibili solo su hover) -->
-        <div v-if="allowDelete || allowAdd" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <!-- Plus Icon -->
-          <button
-            v-if="allowAdd"
-            @click="handleAddClick($event, item)"
-            class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-            title="Add"
-          >
-            <PlusIcon class="w-5 h-5 text-green-600" />
-          </button>
-          
+        <!-- Container per Delete (visibile solo su hover) -->
+        <div v-if="allowDelete" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <!-- Trash Icon -->
           <button
-            v-if="allowDelete"
             @click="handleDeleteClick($event, item)"
             class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
             title="Delete project"
@@ -139,12 +140,28 @@ const handleAddClick = (e, item) => {
           </button>
         </div>
         
-        <!-- Bookmark Icon (sempre visibile se bookmarked, altrimenti su hover) -->
+        <!-- Add Icon (sempre visibile se allowAdd è true) -->
+        <button
+          v-if="allowAdd"
+          @click="handleAddClick($event, item)"
+          class="p-2 rounded-full transition-all shadow-md cursor-pointer opacity-100"
+          :class="isAdded(item) 
+            ? 'bg-green-600 hover:bg-green-700' 
+            : 'bg-white/90 hover:bg-white'"
+          :title="isAdded(item) ? 'Remove from related' : 'Add to related'"
+        >
+          <PlusIcon 
+            :class="isAdded(item) 
+              ? 'w-5 h-5 text-white' 
+              : 'w-5 h-5 text-green-600'" 
+          />
+        </button>
+        
+        <!-- Bookmark Icon (sempre visibile se allowBookmark è true) -->
         <button
           v-if="allowBookmark"
           @click="handleBookmarkClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer"
-          :class="isBookmarked(item) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
+          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer opacity-100"
           :title="isBookmarked(item) ? 'Remove from bookmarks' : 'Add to bookmarks'"
         >
           <BookmarkIconSolid v-if="isBookmarked(item)" class="w-5 h-5 text-blue-600" />

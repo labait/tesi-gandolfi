@@ -7,6 +7,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore'
 
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import Search from '../components/Search.vue'
+import List from '../components/List.vue'
 
 const route = useRoute()
 const project = ref(null)
@@ -24,6 +25,14 @@ const isBookmarked = (item) => {
     return false
   }
   return global.value.account.bookmarks.includes(item.image)
+}
+
+// Function to check if an image is already in the related array of the project
+const isAdded = (item) => {
+  if (!project.value?.related || !item.image) {
+    return false
+  }
+  return project.value.related.includes(item.image)
 }
 
 // Function to reload account from Firebase
@@ -82,6 +91,46 @@ const handleItemBookmarked = async (item) => {
   } catch (error) {
     console.error('Error updating bookmarks:', error)
     alert('Error updating bookmarks')
+  }
+}
+
+// Handle add event from Search component
+const handleItemAdded = async (item) => {
+  if (!project.value?.id || !item.image) {
+    return
+  }
+
+  try {
+    const projectRef = doc(db, 'projects', project.value.id)
+    const currentRelated = project.value.related || []
+    
+    // Check if image is already in related
+    const isAlreadyRelated = currentRelated.includes(item.image)
+    
+    let updatedRelated
+    if (isAlreadyRelated) {
+      // Remove from related
+      updatedRelated = currentRelated.filter(url => url !== item.image)
+    } else {
+      // Add to related
+      updatedRelated = [...currentRelated, item.image]
+    }
+    
+    // Update Firestore
+    await updateDoc(projectRef, {
+      related: updatedRelated,
+      updatedAt: new Date().toISOString()
+    })
+    
+    // Update local project
+    project.value.related = updatedRelated
+    // Update global.project as well
+    global.value.project = { ...project.value }
+    
+    console.log('Related images updated successfully')
+  } catch (error) {
+    console.error('Error updating related images:', error)
+    alert('Error updating related images')
   }
 }
 
@@ -207,6 +256,14 @@ onBeforeUnmount(() => {
   // Reset global.project when component is unmounted
   global.value.project = null
 })
+
+const relatedImages = computed(() => {
+  return project.value?.related.map(image => ({
+    id: image,
+    image: image,
+    alt: 'Related image'
+  })) || []
+})
 </script>
 
 <template>
@@ -248,6 +305,11 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
+    <div v-if="relatedImages.length > 0" class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Related images</h2>
+      <List :items="relatedImages" :allow-bookmark="true" :allow-add="true" :is-bookmarked-fn="isBookmarked" :is-add-fn="isAdded" @item-bookmarked="handleItemBookmarked" @item-added="handleItemAdded" />
+    </div>
+
     <div v-if="project && project.analysis" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Analysis</h2>
       <div class="mb-8">
@@ -276,8 +338,11 @@ onBeforeUnmount(() => {
           :auto-search="true" 
           :initial-query="project.analysis.search_text"
           :allow-bookmark="true"
+          :allow-add="true"
           :is-bookmarked-fn="isBookmarked"
+          :is-add-fn="isAdded"
           @item-bookmarked="handleItemBookmarked"
+          @item-added="handleItemAdded"
         />
       </div>
       <div v-else>
