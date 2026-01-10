@@ -17,8 +17,8 @@ onMounted(() => {
 const loginWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleProvider)
-    // Redirect to profile after successful login
-    router.push('/profile')
+    // Redirect to projects after successful login
+    router.push('/projects')
   } catch (error) {
     console.error('Errore durante il login:', error)
     let errorMessage = 'Errore durante il login'
@@ -47,8 +47,8 @@ const logout = async () => {
   }
 }
 
-const goToProfile = () => {
-  router.push('/profile')
+const goToProjects = () => {
+  router.push('/projects')
 }
 </script>
 
@@ -64,7 +64,7 @@ const goToProfile = () => {
     </div>
     <div v-else class="flex items-center gap-3">
       <button
-        @click="goToProfile"
+        @click="goToProjects"
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         My Projects
