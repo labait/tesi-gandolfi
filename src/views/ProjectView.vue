@@ -184,24 +184,10 @@ onBeforeUnmount(() => {
     <div v-if="project && project.analysis" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Analysis</h2>
       <div class="mb-8">
-        <h3 class="text-lg font-semibold">Graphic style</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.graphic_style }}</p>
-        <h3 class="text-lg font-semibold">Artistic style</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.art_style }}</p>
-        <h3 class="text-lg font-semibold">Font family</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.font_family }}</p>
-        <h3 class="text-lg font-semibold">Chromatic</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.chromatic }}</p>
-        <h3 class="text-lg font-semibold">Colors</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.colors }}</p>
-        <h3 class="text-lg font-semibold">Tags</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.tags }}</p>
-        <h3 class="text-lg font-semibold">Description</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.description }}</p>
-        <h3 class="text-lg font-semibold">Review</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.review }}</p>
-        <h3 class="text-lg font-semibold">Visual analysis</h3>
-        <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis.visual_analysis }}</p>
+        <template v-for="key in Object.keys(project.analysis)">
+          <h3 class="text-lg font-semibold">{{ key.replace('_', ' ').charAt(0).toUpperCase() + key.replace('_', ' ').slice(1) }}</h3>
+          <p class="text-gray-700 whitespace-pre-wrap mb-2">{{ project.analysis[key] }}</p>
+        </template>
       </div>
       <pre v-if="global.debug" class="text-md overflow-x-auto max-w-full max-h-[50vh] overflow-y-auto">{{ JSON.stringify(project.analysis, null, 2) }}</pre>
     </div>
@@ -210,7 +196,7 @@ onBeforeUnmount(() => {
       <h2 class="text-2xl font-semibold mb-2">Color palette</h2>
       <div class="flex flex-wrap gap-2">
         <div v-for="color in project.analysis.colors.split(',').map(color => color.trim())" :key="color" class="flex items-center gap-2 flex-col">
-          <div class="w-20 h-20" :style="{ backgroundColor: color }"></div>
+          <div class="w-20 h-20 rounded-xl" :style="{ backgroundColor: color }"></div>
           <span>{{ color }}</span>
         </div>
       </div>
@@ -219,7 +205,10 @@ onBeforeUnmount(() => {
     <div>
       <h2 class="text-2xl font-semibold mb-4">Search images</h2>
       <div v-if="search_text" class="mb-8"> 
-        <Search :auto-search="true" :initial-query="project.analysis.search_text" />
+        <Search 
+          :auto-search="true" 
+          :initial-query="project.analysis.search_text" 
+        />
       </div>
       <div v-else>
         Analyze the source image to get inspiration for your search.
