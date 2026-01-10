@@ -26,6 +26,32 @@ service cloud.firestore {
                     && resource.data.uid == request.auth.uid;
     }
     
+    // Regole per la collezione accounts
+    match /accounts/{accountId} {
+      // Permette la lettura solo all'utente proprietario dell'account
+      allow read: if request.auth != null && accountId == request.auth.uid;
+      
+      // Permette la creazione solo se:
+      // - l'utente è autenticato
+      // - l'ID del documento corrisponde all'uid dell'utente
+      // - l'uid nell'oggetto corrisponde all'uid dell'utente
+      allow create: if request.auth != null 
+                    && accountId == request.auth.uid
+                    && request.resource.data.uid == request.auth.uid;
+      
+      // Permette l'aggiornamento solo se:
+      // - l'utente è autenticato
+      // - l'ID del documento corrisponde all'uid dell'utente
+      // - l'uid non viene modificato (per sicurezza)
+      allow update: if request.auth != null 
+                    && accountId == request.auth.uid
+                    && request.resource.data.uid == request.auth.uid
+                    && resource.data.uid == request.auth.uid;
+      
+      // Permette la cancellazione solo se l'utente è il proprietario
+      allow delete: if request.auth != null && accountId == request.auth.uid;
+    }
+    
     // Blocca tutto il resto per sicurezza
     match /{document=**} {
       allow read, write: if false;
