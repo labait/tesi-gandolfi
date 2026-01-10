@@ -1,6 +1,6 @@
 <script setup>
   import { defineProps, defineEmits } from 'vue'
-  import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/vue/24/outline'
+  import { ArrowUturnLeftIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
   
   const props = defineProps({
     show: {
@@ -29,7 +29,22 @@
     }
   })
   
-  defineEmits(['previous', 'next', 'first'])
+  const emit = defineEmits(['previous', 'next', 'first'])
+
+  const handlePrevious = (event) => {
+    event.preventDefault()
+    emit('previous')
+  }
+
+  const handleNext = (event) => {
+    event.preventDefault()
+    emit('next')
+  }
+
+  const handleFirst = (event) => {
+    event.preventDefault()
+    emit('first')
+  }
   </script>
   
 
@@ -37,21 +52,21 @@
   <div v-if="show" class="flex justify-center gap-2 items-center py-4">
     <button
       v-if="showFirstPage"
-      @click="$emit('first')"
+      @click.prevent="handleFirst"
       class=" text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
     >
-      <ChevronDoubleLeftIcon class="w-10 h-10" />
+      <ArrowUturnLeftIcon class="w-10 h-10" />
     </button>
 
     <button
       v-if="hasPreviousPage"
-      @click="$emit('previous')"
+      @click.prevent="handlePrevious"
       class=" text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
     >
-      <ChevronLeftIcon class="w-10 h-10" />
+      <ArrowLeftIcon class="w-10 h-10" />
     </button>
     <span v-else class="px-4 py-2 text-gray-400 text-4xl">
-      <ChevronLeftIcon class="w-10 h-10" />
+      <ArrowLeftIcon class="w-10 h-10" />
     </span>
 
     
@@ -61,10 +76,10 @@
     
     <button
       v-if="hasNextPage"
-      @click="$emit('next')"
+      @click.prevent="handleNext"
       class="py-2 text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
     >
-      <ChevronRightIcon class="w-10 h-10" />
+      <ArrowRightIcon class="w-10 h-10" />
     </button>
     <span v-else class="py-2 text-gray-400 text-4xl">→</span>
   </div>

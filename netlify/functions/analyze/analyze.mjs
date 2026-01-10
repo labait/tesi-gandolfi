@@ -3,7 +3,7 @@ export default async (request, context) => {
 
   const prompt = `Examine the attached image and detect graphic style, artistic movement (or period), font families, chromatic palette, colors and tags. 
 
-IMPORTANT: You must respond ONLY with a valid JSON object, without any additional text before or after.
+I need to get inspiration from the image, so add a search_text to help me find similar images via api ie google custom search api.
 
 The JSON structure must be exactly this:
 
@@ -17,7 +17,11 @@ The JSON structure must be exactly this:
   "description": "description of the image",
   "review": "artistic review of the image", 
   "visual_analysis": "visual analysis of the image as if you were going to describe it in a design brief for your team"
-}`
+  "search_text": "search query you'll compose using the analysis of the image"
+}
+
+IMPORTANT: You must respond ONLY with a valid JSON object, without any additional text before or after.  
+`
   const model = 'gpt-4o'
   const max_tokens = 2000
 

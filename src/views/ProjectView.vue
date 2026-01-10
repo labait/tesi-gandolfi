@@ -1,15 +1,22 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, inject, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
+
 import { db } from '../Firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
+
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
+import Search from '../components/Search.vue'
 
 const route = useRoute()
 const project = ref(null)
 const error = ref(null)
 const isAnalyzing = ref(false)
 const global = inject('global')
+
+const search_text = computed(() => {
+  return project.value?.analysis?.search_text || null
+})
 
 const loadProject = async () => {
   const projectId = route.params.id
@@ -168,6 +175,13 @@ onBeforeUnmount(() => {
     <div v-if="project && project.analysis" class="mb-8">
       <h2 class="text-2xl font-semibold mb-4">Analysis</h2>
       <pre v-if="global.debug" class="text-md overflow-x-auto max-w-full max-h-[50vh] overflow-y-auto">{{ JSON.stringify(project.analysis, null, 2) }}</pre>
+    </div>
+
+    <div v-if="search_text" class="mb-8"> 
+      <Search :auto-search="true" :initial-query="project.analysis.search_text" />
+    </div>
+    <div v-else>
+      Analyze the source image to get inspiration for your search.
     </div>
 
   </div>
