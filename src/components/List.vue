@@ -115,36 +115,40 @@ const handleAddClick = (e, item) => {
       class="max-h-64 relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
-      <div v-if="allowDelete || allowBookmark || allowAdd" class="absolute top-2 right-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <!-- Plus Icon -->
-        <button
-          v-if="allowAdd"
-          @click="handleAddClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Add"
-        >
-          <PlusIcon class="w-5 h-5 text-green-600" />
-        </button>
+      <div class="absolute top-2 right-2 z-20 flex gap-2">
+        <!-- Container per Delete e Add (visibili solo su hover) -->
+        <div v-if="allowDelete || allowAdd" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <!-- Plus Icon -->
+          <button
+            v-if="allowAdd"
+            @click="handleAddClick($event, item)"
+            class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
+            title="Add"
+          >
+            <PlusIcon class="w-5 h-5 text-green-600" />
+          </button>
+          
+          <!-- Trash Icon -->
+          <button
+            v-if="allowDelete"
+            @click="handleDeleteClick($event, item)"
+            class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
+            title="Delete project"
+          >
+            <TrashIcon class="w-5 h-5 text-red-600" />
+          </button>
+        </div>
         
-        <!-- Bookmark Icon -->
+        <!-- Bookmark Icon (sempre visibile se bookmarked, altrimenti su hover) -->
         <button
           v-if="allowBookmark"
           @click="handleBookmarkClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
+          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer"
+          :class="isBookmarked(item) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
           :title="isBookmarked(item) ? 'Remove from bookmarks' : 'Add to bookmarks'"
         >
           <BookmarkIconSolid v-if="isBookmarked(item)" class="w-5 h-5 text-blue-600" />
           <BookmarkIconOutline v-else class="w-5 h-5 text-gray-700" />
-        </button>
-        
-        <!-- Trash Icon -->
-        <button
-          v-if="allowDelete"
-          @click="handleDeleteClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Delete project"
-        >
-          <TrashIcon class="w-5 h-5 text-red-600" />
         </button>
       </div>
       

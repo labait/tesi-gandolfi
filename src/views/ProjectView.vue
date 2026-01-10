@@ -18,23 +18,45 @@ const search_text = computed(() => {
   return project.value?.analysis?.search_text || null
 })
 
-// Function to check if an image is bookmarked in the project
+// Function to check if an image is bookmarked in the account
 const isBookmarked = (item) => {
-  if (!project.value?.bookmarks || !item.image) {
+  if (!global.value?.account?.bookmarks || !item.image) {
     return false
   }
-  return project.value.bookmarks.includes(item.image)
+  return global.value.account.bookmarks.includes(item.image)
+}
+
+// Function to reload account from Firebase
+const reloadAccount = async (accountId) => {
+  try {
+    const accountRef = doc(db, 'accounts', accountId)
+    const accountSnap = await getDoc(accountRef)
+
+    if (accountSnap.exists()) {
+      global.value.account = {
+        id: accountSnap.id,
+        ...accountSnap.data()
+      }
+      return global.value.account
+    } else {
+      console.error('Account not found')
+      return null
+    }
+  } catch (error) {
+    console.error('Error reloading account:', error)
+    return null
+  }
 }
 
 // Handle bookmark event from Search component
 const handleItemBookmarked = async (item) => {
-  if (!project.value?.id || !item.image) {
+  if (!global.value?.account?.id || !item.image) {
     return
   }
 
   try {
-    const projectRef = doc(db, 'projects', project.value.id)
-    const currentBookmarks = project.value.bookmarks || []
+    const accountRef = doc(db, 'accounts', global.value.account.id)
+    const currentBookmarks = global.value.account.bookmarks || []
     
     // Check if image is already bookmarked
     const isAlreadyBookmarked = currentBookmarks.includes(item.image)
@@ -49,15 +71,12 @@ const handleItemBookmarked = async (item) => {
     }
     
     // Update Firestore
-    await updateDoc(projectRef, {
-      bookmarks: updatedBookmarks,
-      updatedAt: new Date().toISOString()
+    await updateDoc(accountRef, {
+      bookmarks: updatedBookmarks
     })
     
-    // Update local project
-    project.value.bookmarks = updatedBookmarks
-    // Update global.project as well
-    global.value.project = { ...project.value }
+    // Reload account from Firebase and update global.account
+    await reloadAccount(global.value.account.id)
     
     console.log('Bookmarks updated successfully')
   } catch (error) {
