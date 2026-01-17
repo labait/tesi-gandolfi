@@ -9,6 +9,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore'
 import Nav from './components/Nav.vue'
 import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
+import LightBox from './components/LightBox.vue'
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -18,7 +19,11 @@ const global = ref({
   debug: false,
   loading: null,
   account: null,
-  project: null
+  project: null,
+  lightbox: {
+    show: false,
+    imageUrl: ''
+  }
 })
 
 
@@ -95,6 +100,21 @@ const openProjectModal = () => {
 // Expose function to open modal via provide
 provide('openProjectModal', openProjectModal)
 
+// Function to open lightbox
+const openLightbox = (imageUrl) => {
+  global.value.lightbox.show = true
+  global.value.lightbox.imageUrl = imageUrl
+}
+
+// Expose function to open lightbox via provide
+provide('openLightbox', openLightbox)
+
+// Function to close lightbox
+const closeLightbox = () => {
+  global.value.lightbox.show = false
+  global.value.lightbox.imageUrl = ''
+}
+
 const goToHomepage = () => {
   // Always navigate to Homepage, bypassing guard that redirects to /projects
   router.push({ name: 'Homepage', query: { force: 'true' } })
@@ -109,7 +129,7 @@ const handleProjectSaved = () => {
 
 <template>
   <Loading v-if="global.loading" />
-  <div v-show="!global.loading" class="min-h-screen">
+  <div class="min-h-screen">
     <main class="container mx-auto px-4 py-8">
       <h1 
         @click="goToHomepage"
@@ -122,6 +142,12 @@ const handleProjectSaved = () => {
       <RouterView />
       <!-- Hidden ProjectForm, used only for modal -->
       <ProjectForm ref="projectFormRef" @project-saved="handleProjectSaved" />
+      <!-- LightBox component for image zoom -->
+      <LightBox 
+        :show="global.lightbox.show" 
+        :image-url="global.lightbox.imageUrl"
+        @close="closeLightbox"
+      />
     </main>
   </div>
 </template>

@@ -1,10 +1,8 @@
 <script setup>
 import { ref, inject, defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
-import { db } from '../Firebase'
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import DialogBox from './DialogBox.vue'
-import { PlusIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { BookmarkIcon as BookmarkIconSolid } from '@heroicons/vue/24/solid'
 import { BookmarkIcon as BookmarkIconOutline } from '@heroicons/vue/24/outline'
 import { TrashIcon } from '@heroicons/vue/24/outline'
@@ -25,10 +23,27 @@ const props = defineProps({
   allowAdd: {
     type: Boolean,
     default: false
+  },
+  isBookmarkedFn: {
+    type: Function,
+    default: null
+  },
+  isAddFn: {
+    type: Function,
+    default: null
+  },
+  allowZoom: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['item-deleted'])
+const emit = defineEmits([
+  'item-deleted',
+  'item-added',
+  'item-bookmarked',
+  'item-zoom'
+])
 
 const router = useRouter()
 const global = inject('global')
@@ -39,9 +54,12 @@ const dialogMessage = ref('')
 const itemToDelete = ref(null)
 
 const handleItemClick = (item) => {
-  if (item.id) {
+  // Only navigate if id looks like a Firebase document ID (not a URL)
+  // Firebase IDs are typically alphanumeric and not URLs
+  if (item.id && !item.id.startsWith('http') && !item.id.startsWith('result-')) {
     router.push(`/project/${item.id}`)
   }
+  // For search results (which have URLs as ids), do nothing on click
 }
 
 const handleDeleteClick = (e, item) => {
@@ -51,26 +69,17 @@ const handleDeleteClick = (e, item) => {
   showDialog.value = true
 }
 
-const confirmDelete = async () => {
+const confirmDelete = () => {
   if (!itemToDelete.value?.id) {
     showDialog.value = false
     return
   }
 
-  try {
-    const projectRef = doc(db, 'projects', itemToDelete.value.id)
-    await deleteDoc(projectRef)
-    
-    // Emit event to notify parent component
-    emit('item-deleted', itemToDelete.value.id)
-    
-    showDialog.value = false
-    itemToDelete.value = null
-  } catch (error) {
-    console.error('Error deleting project:', error)
-    alert('Error deleting project')
-    showDialog.value = false
-  }
+  // Emit event to parent component to handle deletion
+  emit('item-deleted', itemToDelete.value.id)
+  
+  showDialog.value = false
+  itemToDelete.value = null
 }
 
 const cancelDelete = () => {
@@ -78,52 +87,48 @@ const cancelDelete = () => {
   itemToDelete.value = null
 }
 
-const handleBookmarkClick = async (e, item) => {
+const handleBookmarkClick = (e, item) => {
   e.stopPropagation() // Prevents click on item box
   
-  if (!global?.value?.account?.id || !item.image) {
+  if (!item.image) {
     return
   }
 
-  try {
-    const accountRef = doc(db, 'accounts', global.value.account.id)
-    const currentBookmarks = global.value.account.bookmarks || []
-    
-    // Check if image is already bookmarked
-    const isBookmarked = currentBookmarks.includes(item.image)
-    
-    let updatedBookmarks
-    if (isBookmarked) {
-      // Remove bookmark
-      updatedBookmarks = currentBookmarks.filter(url => url !== item.image)
-    } else {
-      // Add bookmark
-      updatedBookmarks = [...currentBookmarks, item.image]
-    }
-    
-    // Update Firestore
-    await updateDoc(accountRef, {
-      bookmarks: updatedBookmarks
-    })
-    
-    // Update global object
-    global.value.account.bookmarks = updatedBookmarks
-  } catch (error) {
-    console.error('Error updating bookmarks:', error)
-    alert('Error updating bookmarks')
-  }
+  // Emit event to parent component
+  emit('item-bookmarked', item)
 }
 
+// Function to check if item is bookmarked (uses parent function if provided)
 const isBookmarked = (item) => {
-  if (!global?.value?.account?.bookmarks || !item.image) {
-    return false
+  if (props.isBookmarkedFn && typeof props.isBookmarkedFn === 'function') {
+    return props.isBookmarkedFn(item)
   }
-  return global.value.account.bookmarks.includes(item.image)
+  return false
+}
+
+// Function to check if item is already added (uses parent function if provided)
+const isAdded = (item) => {
+  if (props.isAddFn && typeof props.isAddFn === 'function') {
+    return props.isAddFn(item)
+  }
+  return false
 }
 
 const handleAddClick = (e, item) => {
   e.stopPropagation() // Prevents click on item box
-  console.log(item.image)
+  // Emit event to parent component
+  emit('item-added', item)
+}
+
+const handleZoomClick = (e, item) => {
+  e.stopPropagation() // Prevents click on item box
+  
+  if (!item.image) {
+    return
+  }
+  
+  // Emit event to parent component
+  emit('item-zoom', item)
 }
 
 </script>
@@ -135,39 +140,58 @@ const handleAddClick = (e, item) => {
       v-for="item in items" 
       :key="item.id || item.image" 
       @click="handleItemClick(item)"
-      class="relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
+      class="max-h-64 relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
-      <div v-if="allowDelete || allowBookmark || allowAdd" class="absolute top-2 right-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <!-- Plus Icon -->
+      <div class="absolute top-2 right-2 z-20 flex gap-2">
+        <!-- Container per Delete (visibile solo su hover) -->
+        <div v-if="allowDelete" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <!-- Trash Icon -->
+          <button
+            @click="handleDeleteClick($event, item)"
+            class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
+            title="Delete project"
+          >
+            <TrashIcon class="w-5 h-5 text-red-600" />
+          </button>
+        </div>
+        
+        <!-- Add Icon (sempre visibile se allowAdd è true) -->
         <button
           v-if="allowAdd"
           @click="handleAddClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Add"
+          class="p-2 rounded-full transition-all shadow-md cursor-pointer opacity-100"
+          :class="isAdded(item) 
+            ? 'bg-green-600 hover:bg-green-700' 
+            : 'bg-white/90 hover:bg-white'"
+          :title="isAdded(item) ? 'Remove from related' : 'Add to related'"
         >
-          <PlusIcon class="w-5 h-5 text-green-600" />
+          <PlusIcon 
+            :class="isAdded(item) 
+              ? 'w-5 h-5 text-white' 
+              : 'w-5 h-5 text-green-600'" 
+          />
         </button>
         
-        <!-- Bookmark Icon -->
+        <!-- Bookmark Icon (sempre visibile se allowBookmark è true) -->
         <button
           v-if="allowBookmark"
           @click="handleBookmarkClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
+          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer opacity-100"
           :title="isBookmarked(item) ? 'Remove from bookmarks' : 'Add to bookmarks'"
         >
           <BookmarkIconSolid v-if="isBookmarked(item)" class="w-5 h-5 text-blue-600" />
           <BookmarkIconOutline v-else class="w-5 h-5 text-gray-700" />
         </button>
         
-        <!-- Trash Icon -->
+        <!-- Zoom Icon (sempre visibile se allowZoom è true) -->
         <button
-          v-if="allowDelete"
-          @click="handleDeleteClick($event, item)"
-          class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-md cursor-pointer"
-          title="Delete project"
+          v-if="allowZoom"
+          @click="handleZoomClick($event, item)"
+          class="p-2 bg-white/90 rounded-full hover:bg-white transition-all shadow-md cursor-pointer opacity-100"
+          title="Zoom image"
         >
-          <TrashIcon class="w-5 h-5 text-red-600" />
+          <MagnifyingGlassIcon class="w-5 h-5 text-gray-700" />
         </button>
       </div>
       

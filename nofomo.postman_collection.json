@@ -1,148 +1,183 @@
 {
 	"info": {
-		"_postman_id": "18868728-d5d9-4d67-80b9-004dbdc26833",
+		"_postman_id": "dff027f9-a053-4ea7-94b4-089460d27b2b",
 		"name": "nofomo",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "10855",
-		"_collection_link": "https://antomoli.postman.co/workspace/nofomo~331bf78c-4caa-46f6-a6cd-b232888ca58c/collection/10855-18868728-d5d9-4d67-80b9-004dbdc26833?action=share&source=collection_link&creator=10855"
+		"_collection_link": "https://antomoli.postman.co/workspace/tesi-gandolfi~c4518772-18b1-409b-a53a-3d853156e1de/collection/10855-dff027f9-a053-4ea7-94b4-089460d27b2b?action=share&source=collection_link&creator=10855"
 	},
 	"item": [
 		{
-			"name": "google",
-			"item": [
-				{
-					"name": "search",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://www.googleapis.com/customsearch/v1?key={{google_api_key}}&cx=5193fa5af2abc4287&q=vignelli style red poster &searchType=image&imgColorType=mono&imgSize=large&fileType=png&safe=active",
-							"protocol": "https",
-							"host": [
-								"www",
-								"googleapis",
-								"com"
-							],
-							"path": [
-								"customsearch",
-								"v1"
-							],
-							"query": [
-								{
-									"key": "key",
-									"value": "{{google_api_key}}"
-								},
-								{
-									"key": "cx",
-									"value": "5193fa5af2abc4287"
-								},
-								{
-									"key": "q",
-									"value": "vignelli style red poster "
-								},
-								{
-									"key": "searchType",
-									"value": "image"
-								},
-								{
-									"key": "imgColorType",
-									"value": "mono"
-								},
-								{
-									"key": "imgSize",
-									"value": "large"
-								},
-								{
-									"key": "fileType",
-									"value": "png"
-								},
-								{
-									"key": "safe",
-									"value": "active"
-								}
-							]
+			"name": "google search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/customsearch/v1?key={{google_api_key}}&cx=5193fa5af2abc4287&q=vignelli style red poster &searchType=image&imgColorType=mono&imgSize=large&fileType=png&safe=active",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"customsearch",
+						"v1"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{google_api_key}}"
+						},
+						{
+							"key": "cx",
+							"value": "5193fa5af2abc4287"
+						},
+						{
+							"key": "q",
+							"value": "vignelli style red poster "
+						},
+						{
+							"key": "searchType",
+							"value": "image"
+						},
+						{
+							"key": "imgColorType",
+							"value": "mono"
+						},
+						{
+							"key": "imgSize",
+							"value": "large"
+						},
+						{
+							"key": "fileType",
+							"value": "png"
+						},
+						{
+							"key": "safe",
+							"value": "active"
 						}
-					},
-					"response": []
+					]
 				}
-			]
+			},
+			"response": []
 		},
 		{
-			"name": "pinterest",
-			"item": [
-				{
-					"name": "search",
-					"request": {
-						"auth": {
-							"type": "oauth2",
-							"oauth2": [
-								{
-									"key": "grant_type",
-									"value": "authorization_code",
-									"type": "string"
-								},
-								{
-									"key": "addTokenTo",
-									"value": "header",
-									"type": "string"
-								},
-								{
-									"key": "client_authentication",
-									"value": "header",
-									"type": "string"
-								},
-								{
-									"key": "authUrl",
-									"value": "https://www.pinterest.com/oauth",
-									"type": "string"
-								},
-								{
-									"key": "clientId",
-									"value": "1523933",
-									"type": "string"
-								},
-								{
-									"key": "scope",
-									"value": "user_account:read,pins:read,boards:read",
-									"type": "string"
-								},
-								{
-									"key": "accessTokenUrl",
-									"value": "https://api.pinterest.com/v5/oauth/token",
-									"type": "string"
-								},
-								{
-									"key": "tokenName",
-									"value": "Pinterest API v5",
-									"type": "string"
-								},
-								{
-									"key": "useBrowser",
-									"value": true,
-									"type": "boolean"
-								}
-							]
+			"name": "pinterest search",
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
 						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://api.pinterest.com/v5/search/boards",
-							"protocol": "https",
-							"host": [
-								"api",
-								"pinterest",
-								"com"
-							],
-							"path": [
-								"v5",
-								"search",
-								"boards"
-							]
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://www.pinterest.com/oauth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "1523933",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "user_account:read,pins:read,boards:read",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://api.pinterest.com/v5/oauth/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Pinterest API v5",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
 						}
-					},
-					"response": []
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.pinterest.com/v5/search/boards",
+					"protocol": "https",
+					"host": [
+						"api",
+						"pinterest",
+						"com"
+					],
+					"path": [
+						"v5",
+						"search",
+						"boards"
+					]
 				}
-			]
+			},
+			"response": []
+		},
+		{
+			"name": "analyze",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "image",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8888/.netlify/functions/analyze",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8888",
+					"path": [
+						".netlify",
+						"functions",
+						"analyze"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "google_api_key",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
