@@ -131,13 +131,14 @@ const handleProjectSaved = () => {
   <Loading v-if="global.loading" />
   <div class="min-h-screen">
     <main class="container mx-auto px-4 py-8">
+      <Nav />
       <h1 
         @click="goToHomepage"
-        class="font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
+        class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
       >
         prisma
       </h1>
-      <Nav />
+      
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
       <!-- Hidden ProjectForm, used only for modal -->

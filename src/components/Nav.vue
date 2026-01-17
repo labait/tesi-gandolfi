@@ -72,7 +72,7 @@ const goToProjects = () => {
 </script>
 
 <template>
-  <nav class="flex items-center justify-center gap-4 py-4 mb-8">
+  <nav class=" flex items-center justify-center gap-4 py-4 mb-8">
     <div v-if="!user" class="flex items-center w-full sm:w-auto">
       <button
         @click="loginWithGoogle"
