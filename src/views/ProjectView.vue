@@ -304,7 +304,7 @@ const handleItemZoom = (item) => {
         <button
           @click="handleAnalyze"
           :disabled="isAnalyzing"
-          class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          class="cursor-pointer px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
         >
           <MagnifyingGlassIcon class="w-5 h-5" />
           <span v-if="isAnalyzing">Analyzing...</span>

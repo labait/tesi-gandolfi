@@ -106,7 +106,7 @@ onUnmounted(() => {
           :items="projects" 
           :allow-delete="true"
           :allow-bookmark="true"
-          :allow-add="true"
+          :allow-add="false"
           @item-deleted="handleItemDeleted"
         />
       </div>
