@@ -1,3 +1,4 @@
+<!-- NUMERAZIONE PAGINE RISULTATI -->
 <script setup>
   import { defineProps, defineEmits } from 'vue'
   import { ArrowUturnLeftIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
@@ -87,4 +88,7 @@
 
 
 <style scoped>
+  .text-blue-600 {
+    color: rgb(104, 132, 194);
+  }
 </style>

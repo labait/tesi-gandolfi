@@ -1,3 +1,4 @@
+<!-- SEZIONE ELEMENTI SALVATI -->
 <script setup>
 import { ref, inject, defineProps, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
@@ -54,7 +55,7 @@ const dialogMessage = ref('')
 const itemToDelete = ref(null)
 
 const handleItemClick = (item) => {
-  // Only navigate if id looks like a Firebase document ID (not a URL)
+  // Naviga solo se l'ID sembra un ID Firebase (non un URL) sennò non fa nulla
   // Firebase IDs are typically alphanumeric and not URLs
   if (item.id && !item.id.startsWith('http') && !item.id.startsWith('result-')) {
     router.push(`/project/${item.id}`)
@@ -62,7 +63,7 @@ const handleItemClick = (item) => {
   // For search results (which have URLs as ids), do nothing on click
 }
 
-const handleDeleteClick = (e, item) => {
+const handleDeleteClick = (e, item) => {   // ELIMINAZIONE CON CONFERMA
   e.stopPropagation() // Prevents click on item box
   itemToDelete.value = item
   dialogMessage.value = `Are you sure you want to delete the project "${item.title || 'this project'}"?`
@@ -87,7 +88,7 @@ const cancelDelete = () => {
   itemToDelete.value = null
 }
 
-const handleBookmarkClick = (e, item) => {
+const handleBookmarkClick = (e, item) => { // FUNZIONE BOOKMARK
   e.stopPropagation() // Prevents click on item box
   
   if (!item.image) {
@@ -106,7 +107,7 @@ const isBookmarked = (item) => {
   return false
 }
 
-// Function to check if item is already added (uses parent function if provided)
+// CONTROLLA SE è BOOKMARKED
 const isAdded = (item) => {
   if (props.isAddFn && typeof props.isAddFn === 'function') {
     return props.isAddFn(item)
@@ -133,14 +134,14 @@ const handleZoomClick = (e, item) => {
 
 </script>
 
-<template>
+<template> <!-- GRIGLIA RESPONSIVE-->
   <div 
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
     <div 
       v-for="item in items" 
       :key="item.id || item.image" 
       @click="handleItemClick(item)"
-      class="max-h-64 relative hover:scale-120 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
+      class="max-h-64 relative hover:scale-110 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
       <div class="absolute top-2 right-2 z-20 flex gap-2">
@@ -202,7 +203,7 @@ const handleZoomClick = (e, item) => {
     </div>
   </div>
   
-  <!-- DialogBox for delete confirmation -->
+  <!-- DialogBox per conferma eliminazione -->
   <DialogBox
     :show="showDialog"
     title="Confirm Deletion"

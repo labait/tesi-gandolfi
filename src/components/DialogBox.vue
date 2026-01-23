@@ -1,3 +1,4 @@
+<!-- BOX TESTO CANCELLA O CONFERMA-->
 <script setup>
 import { defineProps, defineEmits } from 'vue'
 
@@ -29,12 +30,12 @@ const handleCancel = () => {
 
 <template>
   <div
-    v-if="show"
-    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    v-if="show" 
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
     @click.self="handleCancel"
   >
     <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
-      <h3 class="text-xl font-bold mb-4">{{ title }}</h3>
+      <h3 class="text-xl text-gray-700 font-bold mb-4">{{ title }}</h3>
       <p class="text-gray-700 mb-6">{{ message }}</p>
       <div class="flex justify-end gap-3">
         <button
@@ -55,4 +56,13 @@ const handleCancel = () => {
 </template>
 
 <style scoped>
+  .bg-black {
+    background-color: rgb(61, 61, 58);
+  }
+  .bg-white {
+    background-color: rgb(244, 241, 229);
+  }
+  .bg-blue-600 {
+    background-color: rgb(104, 132, 194);
+  }
 </style>

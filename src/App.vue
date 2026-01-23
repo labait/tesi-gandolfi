@@ -10,6 +10,7 @@ import Nav from './components/Nav.vue'
 import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
+import logo from './assets/logo_prisma_definitivo.svg' 
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -28,7 +29,7 @@ const global = ref({
 
 
 
-// Helper function to create or get user account
+// GESTIONE ACCOUNT FIREBASE
 const ensureAccount = async (uid) => {
   if (!uid) {
     global.value.account = null
@@ -70,7 +71,7 @@ const ensureAccount = async (uid) => {
   }
 }
 
-// Handle authentication state and load account
+// AUTENTCAZIONE
 onMounted(() => {
   // global.debug = true if query param debug is present
   if (window.location.search.includes('debug')) {
@@ -100,7 +101,7 @@ const openProjectModal = () => {
 // Expose function to open modal via provide
 provide('openProjectModal', openProjectModal)
 
-// Function to open lightbox
+// GESTIONE LIGHTBOX
 const openLightbox = (imageUrl) => {
   global.value.lightbox.show = true
   global.value.lightbox.imageUrl = imageUrl
@@ -115,11 +116,13 @@ const closeLightbox = () => {
   global.value.lightbox.imageUrl = ''
 }
 
+// NAVIGAZIONE ALL'HOMEPAGE
 const goToHomepage = () => {
   // Always navigate to Homepage, bypassing guard that redirects to /projects
   router.push({ name: 'Homepage', query: { force: 'true' } })
 }
 
+// HANDLER EVENTO SALVATAGGIO PROGETTO
 const handleProjectSaved = () => {
   // Event emitted when a project is saved
   // Emit custom event to notify other components
@@ -127,6 +130,7 @@ const handleProjectSaved = () => {
 }
 </script>
 
+<!-- LA SCEHRMATA -->
 <template>
   <Loading v-if="global.loading" />
   <div class="min-h-screen">
@@ -134,11 +138,11 @@ const handleProjectSaved = () => {
       <Nav />
       <h1 
         @click="goToHomepage"
-        class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
+        class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"></h1>
+        <img src="/logo_prisma_definitivo.svg" alt="prisma logo" class="w-32 mx-auto mb-4 cursor-pointer" />
       >
         prisma
-      </h1>
-      
+    
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
       <!-- Hidden ProjectForm, used only for modal -->

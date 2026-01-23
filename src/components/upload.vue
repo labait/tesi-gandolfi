@@ -1,3 +1,4 @@
+<!-- BOX UPLOADER IMMAGINI CON ANTEPRIMA E BOTTONE ANALISI-->
 <template>
   <div class="flex flex-col items-center justify-center  p-8">
     <div
@@ -157,4 +158,10 @@ const analyze = async () => {
 </script>
 
 <style scoped>
+  .bg-blue-600 {
+    background-color: rgb(104, 132, 194);
+  }
+  .text-white {
+    color: rgb(244, 241, 229);
+  }
 </style>
