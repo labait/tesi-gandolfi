@@ -1,3 +1,4 @@
+<!-- BOX IMMAGINI-->
 <script setup>
 import { defineProps, defineEmits, watch, onBeforeUnmount } from 'vue'
 import { XMarkIcon } from '@heroicons/vue/24/outline'

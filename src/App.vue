@@ -10,6 +10,7 @@ import Nav from './components/Nav.vue'
 import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
+import LightboxGrid from './components/LightboxGrid.vue' //PROVAAAAA
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -22,7 +23,8 @@ const global = ref({
   project: null,
   lightbox: {
     show: false,
-    imageUrl: ''
+    imageUrl: '',
+    layout: 'grid' // 'grid' | 'map' PROVAAAAA
   }
 })
 
@@ -127,6 +129,11 @@ const handleProjectSaved = () => {
   // Emit custom event to notify other components
   window.dispatchEvent(new CustomEvent('project-saved'))
 }
+
+// BOTTONI GRIGLIE O MAPPA
+lightboxLayout: 'grid' | 'map'
+
+
 </script>
 
 <!-- LA SCEHRMATA -->
@@ -142,6 +149,35 @@ const handleProjectSaved = () => {
   prisma
 </h1>
 
+<!-- PROVAAAAA-->
+<div class="flex justify-center gap-4 mb-8">
+  <button
+    @click="global.lightbox.layout = 'grid'"
+    :class="[
+      'px-4 py-2 rounded-full text-sm font-semibold transition',
+      global.lightbox.layout === 'grid'
+        ? 'bg-black text-white'
+        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+    ]"
+  >
+    Grid
+  </button>
+
+  <button
+    @click="global.lightbox.layout = 'map'"
+    :class="[
+      'px-4 py-2 rounded-full text-sm font-semibold transition',
+      global.lightbox.layout === 'map'
+        ? 'bg-black text-white'
+        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+    ]"
+  >
+    Map
+  </button>
+</div>
+
+<LightboxGrid />
+<!-- PROVAAAAA-->
     
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
