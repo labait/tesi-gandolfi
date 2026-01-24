@@ -1,57 +1,81 @@
 <!-- PROVAAAAAA-->
 <script setup>
-import { inject } from 'vue'
+import { defineProps, defineEmits, watch, onBeforeUnmount } from 'vue'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 
-const global = inject('global')
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false
+  },
+  imageUrl: {
+    type: String,
+    default: ''
+  }
+})
 
-// immagini di esempio (poi le collegherai ai progetti veri)
-const images = [
-  { id: 1, thumb: '/img/1.jpg', url: '/img/1.jpg', x: 100, y: 150 },
-  { id: 2, thumb: '/img/2.jpg', url: '/img/2.jpg', x: 400, y: 300 },
-  { id: 3, thumb: '/img/3.jpg', url: '/img/3.jpg', x: 700, y: 200 }
-]
+const emit = defineEmits(['close'])
 
-const openLightbox = (url) => {
-  global.lightbox.show = true
-  global.lightbox.imageUrl = url
+const handleClose = () => {
+  emit('close')
 }
+
+const handleOverlayClick = (event) => {
+  if (event.target === event.currentTarget) {
+    handleClose()
+  }
+}
+
+// ESC key
+let escapeHandler = null
+
+watch(() => props.show, (isShowing) => {
+  if (isShowing) {
+    escapeHandler = (event) => {
+      if (event.key === 'Escape') handleClose()
+    }
+    window.addEventListener('keydown', escapeHandler)
+  } else {
+    window.removeEventListener('keydown', escapeHandler)
+    escapeHandler = null
+  }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', escapeHandler)
+})
 </script>
 
 <template>
-  <!-- PROPOSTA 1: GRID CLASSICA -->
   <div
-    v-if="global.lightbox.layout === 'grid'"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+    v-if="show"
+    class="fixed inset-0 flex items-center justify-center z-50"
+    :style="{ backgroundColor: 'rgb(61, 61, 58)' }"
+    @click="handleOverlayClick"
   >
-    <div
-      v-for="img in images"
-      :key="img.id"
-      class="cursor-pointer"
-      @click="openLightbox(img.url)"
-    >
-      <img
-        :src="img.thumb"
-        class="rounded-lg shadow-md hover:scale-105 transition"
-      />
-    </div>
-  </div>
+    <div class="relative w-full h-full flex items-center justify-center">
+      
+      <!-- Close button -->
+      <button
+        @click="handleClose"
+        class="absolute top-6 right-6 p-2 rounded-full shadow-md transition hover:opacity-80"
+        :style="{ backgroundColor: 'rgb(244, 241, 229)' }"
+        title="Close"
+      >
+        <XMarkIcon class="w-6 h-6 text-gray-800" />
+      </button>
 
-  <!-- PROPOSTA 2: MAP / SPAZIALE -->
-  <div
-    v-else
-    class="relative w-full h-[80vh] bg-gray-100 overflow-hidden"
-  >
-    <div
-      v-for="img in images"
-      :key="img.id"
-      class="absolute cursor-pointer"
-      :style="{ top: img.y + 'px', left: img.x + 'px' }"
-      @click="openLightbox(img.url)"
-    >
+      <!-- Image -->
       <img
-        :src="img.thumb"
-        class="w-40 rounded-lg shadow-lg hover:scale-105 transition"
+        v-if="imageUrl"
+        :src="imageUrl"
+        alt="Zoomed image"
+        class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl"
       />
     </div>
   </div>
 </template>
+
+<style scoped>
+  
+</style>

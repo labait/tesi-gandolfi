@@ -10,7 +10,8 @@ import Nav from './components/Nav.vue'
 import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
-import LightboxGrid from './components/LightboxGrid.vue' //PROVAAAAA
+// import LightboxGrid from './components/LightboxGrid.vue' //PROVAAAAA
+import Gallery from '@/components/Gallery.vue' //PROVAAAAA
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -176,7 +177,7 @@ lightboxLayout: 'grid' | 'map'
   </button>
 </div>
 
-<LightboxGrid />
+<Gallery />
 <!-- PROVAAAAA-->
     
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
