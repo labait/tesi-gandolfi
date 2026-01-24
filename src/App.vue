@@ -10,7 +10,6 @@ import Nav from './components/Nav.vue'
 import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
-import logo from './assets/logo_prisma_definitivo.svg' 
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -137,11 +136,12 @@ const handleProjectSaved = () => {
     <main class="container mx-auto px-4 py-8">
       <Nav />
       <h1 
-        @click="goToHomepage"
-        class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"></h1>
-        <img src="/logo_prisma_definitivo.svg" alt="prisma logo" class="w-32 mx-auto mb-4 cursor-pointer" />
-      >
-        prisma
+  @click="goToHomepage"
+  class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
+>
+  prisma
+</h1>
+
     
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
