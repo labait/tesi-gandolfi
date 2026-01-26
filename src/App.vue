@@ -11,7 +11,7 @@ import ProjectForm from './components/ProjectForm.vue'
 import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
 // import LightboxGrid from './components/LightboxGrid.vue' //PROVAAAAA
-import Gallery from '@/components/Gallery.vue' //PROVAAAAA
+import Gallery from './components/Gallery.vue' //PROVAAAAA
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -149,33 +149,6 @@ lightboxLayout: 'grid' | 'map'
 >
   prisma
 </h1>
-
-<!-- PROVAAAAA-->
-<div class="flex justify-center gap-4 mb-8">
-  <button
-    @click="global.lightbox.layout = 'grid'"
-    :class="[
-      'px-4 py-2 rounded-full text-sm font-semibold transition',
-      global.lightbox.layout === 'grid'
-        ? 'bg-black text-white'
-        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-    ]"
-  >
-    Grid
-  </button>
-
-  <button
-    @click="global.lightbox.layout = 'map'"
-    :class="[
-      'px-4 py-2 rounded-full text-sm font-semibold transition',
-      global.lightbox.layout === 'map'
-        ? 'bg-black text-white'
-        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-    ]"
-  >
-    Map
-  </button>
-</div>
 
 <Gallery />
 <!-- PROVAAAAA-->
