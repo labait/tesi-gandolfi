@@ -141,17 +141,21 @@ lightboxLayout: 'grid' | 'map'
 <template>
   <Loading v-if="global.loading" />
   <div class="min-h-screen">
+    
     <main class="container mx-auto px-4 py-8">
       <Nav />
-      <h1 
-  @click="goToHomepage"
-  class="mb-8 font-bold text-6xl md:text-[8vw] text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity"
->
-  prisma
-</h1>
+      <div 
+        @click="goToHomepage"
+        class="mb-8 text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity flex justify-center"
+      >
+        <img 
+          src="/logo_prisma_definitivo.svg" 
+          alt="Prisma Logo" 
+          class="h-20 md:h-32 lg:h-40 w-auto"
+        />
+      </div>
 
 <Gallery />
-<!-- PROVAAAAA-->
     
       <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
       <RouterView />
