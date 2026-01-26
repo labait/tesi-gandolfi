@@ -1,5 +1,5 @@
 <!-- PROVAAAAA -->
- <script setup>
+<script setup>
 import { ref, inject } from 'vue'
 
 const openLightbox = inject('openLightbox')
@@ -21,16 +21,14 @@ const images = [
   <div class="flex gap-4 justify-center mb-8">
     <button
       @click="layoutMode = 'grid'"
-      :class="layoutMode === 'grid' ? 'bg-black text-white' : 'bg-gray-200'"
-      class="px-4 py-2 rounded"
+      :class="layoutMode === 'grid' ? 'btn-secondary' : 'btn-disabled'"
     >
       Griglia
     </button>
 
     <button
       @click="layoutMode = 'map'"
-      :class="layoutMode === 'map' ? 'bg-black text-white' : 'bg-gray-200'"
-      class="px-4 py-2 rounded"
+      :class="layoutMode === 'map' ? 'btn-secondary' : 'btn-disabled'"
     >
       Mappa
     </button>

@@ -214,7 +214,7 @@
       <button
         @click="handleSearch"
         :disabled="global.loading || !searchQuery.trim()"
-        class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
+        class="btn-default disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <MagnifyingGlassIcon class="w-5 h-5" />
         <span>Search</span>

@@ -58,7 +58,7 @@
       v-if="hasImage"
       @click="analyze"
       :disabled="isAnalyzing"
-      class="cursor-pointer mt-8 px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="btn-default mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span v-if="!isAnalyzing">Analyze Image</span>
       <span v-else>Analyzing...</span>

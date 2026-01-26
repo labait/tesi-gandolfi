@@ -78,7 +78,7 @@ const goToProjects = () => {
       <!-- BOTTONE LOGIN GOOGLE -->
       <button
         @click="loginWithGoogle" 
-        class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto whitespace-nowrap"
+        class="btn-default"
       >
        <span>Connect with Google</span>
       </button>
@@ -88,7 +88,7 @@ const goToProjects = () => {
       <button
         v-if="openProjectModal"
         @click="openProjectModal"
-        class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+        class="btn-default"
       >
         <PlusIcon class="w-5 h-5" />
         <span>New Project</span>
@@ -97,7 +97,7 @@ const goToProjects = () => {
       <!-- BOTTONE VAI AI PROGETTI -->
       <button
         @click="goToProjects" 
-        class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+        class="btn-default"
       >
         <Squares2X2Icon class="w-5 h-5" />
         <span>My Projects</span>
@@ -112,7 +112,7 @@ const goToProjects = () => {
       <!-- BOTTONE LOGOUT (last element) -->
       <button
         @click="handleLogoutClick"
-        class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
+        class="btn-default"
       >
         <ArrowRightStartOnRectangleIcon class="w-5 h-5" />
         <span>Logout</span>
