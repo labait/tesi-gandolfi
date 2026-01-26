@@ -1,4 +1,4 @@
-
+<!-- BARRA DI RICERCA -->
 <script setup>
   import { ref, computed, onMounted, inject, defineProps } from 'vue'
   import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
@@ -282,4 +282,10 @@
 
 
 <style scoped>
+  .bg-blue-600 {
+    background-color: rgb(104, 132, 194);
+  }
+  .text-white {
+    color: rgb(244, 241, 229);
+  }
 </style>

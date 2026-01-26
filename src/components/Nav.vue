@@ -1,3 +1,4 @@
+<!-- HEADER BOTTONI -->
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
@@ -74,15 +75,16 @@ const goToProjects = () => {
 <template>
   <nav class=" flex items-center justify-center gap-4 py-4 mb-8">
     <div v-if="!user" class="flex items-center w-full sm:w-auto">
+      <!-- BOTTONE LOGIN GOOGLE -->
       <button
-        @click="loginWithGoogle"
+        @click="loginWithGoogle" 
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 w-full sm:w-auto whitespace-nowrap"
       >
-        Connect with Google
+       <span>Connect with Google</span>
       </button>
     </div>
     <div v-else class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-      <!-- New Project Button (first element) -->
+      <!-- BOTTONE NUOVO PROGETTO (first element) -->
       <button
         v-if="openProjectModal"
         @click="openProjectModal"
@@ -91,9 +93,10 @@ const goToProjects = () => {
         <PlusIcon class="w-5 h-5" />
         <span>New Project</span>
       </button>
-      
+
+      <!-- BOTTONE VAI AI PROGETTI -->
       <button
-        @click="goToProjects"
+        @click="goToProjects" 
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
       >
         <Squares2X2Icon class="w-5 h-5" />
@@ -106,6 +109,7 @@ const goToProjects = () => {
         :alt="user.displayName"
         class="w-10 h-10 rounded-full border-2 border-gray-300 cursor-pointer"
       />
+      <!-- BOTTONE LOGOUT (last element) -->
       <button
         @click="handleLogoutClick"
         class="cursor-pointer px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center gap-2 w-full sm:w-auto whitespace-nowrap"
@@ -116,7 +120,7 @@ const goToProjects = () => {
     </div>
   </nav>
   
-  <!-- DialogBox for logout confirmation -->
+  <!-- DialogBox PER CONFERMA LOGOUT-->
   <DialogBox
     :show="showLogoutDialog"
     title="Confirm Logout"
@@ -127,5 +131,11 @@ const goToProjects = () => {
 </template>
 
 <style scoped>
+  .bg-blue-600 {
+    background-color: rgb(104, 132, 194);
+  }
+  .text-white {
+    color: rgb(244, 241, 229);
+  }
 </style>
 
