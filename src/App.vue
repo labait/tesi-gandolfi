@@ -137,32 +137,45 @@ lightboxLayout: 'grid' | 'map'
 
 </script>
 
-<!-- LA SCHERMATA -->
+<!-- LOGO PRISMA/HEADER-->
 <template>
   <Loading v-if="global.loading" />
-<header class="container-logo mx-auto alingn-center mb-4 mt-4"> 
+<header
+  class="fixed top-0 left-0 w-full z-50 background"
+>
   <div
-    @click="goToHomepage"
-    class="cursor-pointer flex items-center"
-  > 
-    <!-- LOGO GRANDE (md e lg) -->
-    <img
-      src="/logo_prisma_definitivo.svg"
-      alt="Prisma Logo"
-      class="hidden sm:block md:h-20 lg:h-25 w-auto"
-    /> 
+    class="mx-auto flex items-center relative px-4 py-2"
+  >
+    <!-- LOGO -->
+    <div
+      @click="goToHomepage"
+      class="cursor-pointer flex items-center relative z-10"
+    >
+      <!-- Desktop -->
+      <img
+        src="/logo_prisma_definitivo.svg"
+        alt="Prisma Logo"
+        class="hidden sm:block h-15 w-auto"
+      />
+      <!-- Mobile -->
+      <img
+        src="/logo_rid_prisma.svg"
+        alt="Prisma Rid Logo"
+        class="block sm:hidden h-15 w-auto"
+      />
+    </div>
 
-    <!-- LOGO PICCOLO (mobile) -->
-    <img
-      src="/logo_rid_prisma.svg"
-      alt="Prisma Rid Logo"
-      class="block sm:hidden h-20 w-auto "
-    /> 
-  
+    <!-- BOTTONI -->
+    <Nav class="absolute left-1/2 -translate-x-1/2" />
+
   </div>
-
-  <Nav />
 </header>
+<main class="pt-20">
+  <RouterView />
+</main>
+
+
+
 
 
 
