@@ -73,7 +73,7 @@ const goToProjects = () => {
 </script>
 
 <template>
-  <nav class=" flex items-center justify-center gap-4 py-4 mb-8">
+  <nav class=" background flex items-center justify-center gap-4 py-3 ">
     <div v-if="!user" class="flex items-center w-full sm:w-auto">
       <!-- BOTTONE LOGIN GOOGLE -->
       <button
@@ -83,23 +83,23 @@ const goToProjects = () => {
        <span>Connect with Google</span>
       </button>
     </div>
-    <div v-else class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+    <div v-else class="justify-center flex flex-row sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto px-5">
       <!-- BOTTONE NUOVO PROGETTO (first element) -->
       <button
         v-if="openProjectModal"
         @click="openProjectModal"
-        class="btn-default"
+        class="btn-header"
       >
-        <PlusIcon class="w-5 h-5" />
+        <PlusIcon class="w-4 h-4" />
         <span>New Project</span>
       </button>
 
       <!-- BOTTONE VAI AI PROGETTI -->
       <button
         @click="goToProjects" 
-        class="btn-default"
+        class="btn-header"
       >
-        <Squares2X2Icon class="w-5 h-5" />
+        <Squares2X2Icon class="w-4 h-4" />
         <span>My Projects</span>
       </button>
       <img
@@ -112,9 +112,9 @@ const goToProjects = () => {
       <!-- BOTTONE LOGOUT (last element) -->
       <button
         @click="handleLogoutClick"
-        class="btn-default"
+        class="btn-header"
       >
-        <ArrowRightStartOnRectangleIcon class="w-5 h-5" />
+        <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
         <span>Logout</span>
       </button>
     </div>
@@ -131,11 +131,6 @@ const goToProjects = () => {
 </template>
 
 <style scoped>
-  .bg-blue-600 {
-    background-color: rgb(104, 132, 194);
-  }
-  .text-white {
-    color: rgb(244, 241, 229);
-  }
+
 </style>
 

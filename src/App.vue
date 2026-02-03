@@ -137,23 +137,34 @@ lightboxLayout: 'grid' | 'map'
 
 </script>
 
-<!-- LA SCEHRMATA -->
+<!-- LA SCHERMATA -->
 <template>
   <Loading v-if="global.loading" />
-  <div class="min-h-screen">
-    
-    <main class="container mx-auto px-4 py-8">
-      <Nav />
-      <div 
-        @click="goToHomepage"
-        class="mb-8 text-center mt-10 cursor-pointer hover:opacity-80 transition-opacity flex justify-center"
-      >
-        <img 
-          src="/logo_prisma_definitivo.svg" 
-          alt="Prisma Logo" 
-          class="h-20 md:h-32 lg:h-40 w-auto"
-        />
-      </div>
+<header class="container-logo mx-auto alingn-center mb-4 mt-4"> 
+  <div
+    @click="goToHomepage"
+    class="cursor-pointer flex items-center"
+  > 
+    <!-- LOGO GRANDE (md e lg) -->
+    <img
+      src="/logo_prisma_definitivo.svg"
+      alt="Prisma Logo"
+      class="hidden sm:block md:h-20 lg:h-25 w-auto"
+    /> 
+
+    <!-- LOGO PICCOLO (mobile) -->
+    <img
+      src="/logo_rid_prisma.svg"
+      alt="Prisma Rid Logo"
+      class="block sm:hidden h-20 w-auto "
+    /> 
+  
+  </div>
+
+  <Nav />
+</header>
+
+
 
 <Gallery />
     
@@ -166,11 +177,17 @@ lightboxLayout: 'grid' | 'map'
         :show="global.lightbox.show" 
         :image-url="global.lightbox.imageUrl"
         @close="closeLightbox"
+    
       />
-    </main>
-  </div>
+
 </template>
 
-<style scoped>
 
+
+<style scoped>
+.background {
+  @apply 
+    bg-[rgb(245,246,239)]
+  
+}
 </style>

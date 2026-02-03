@@ -29,12 +29,14 @@ console.log(items)
 </script>
 
 <template>
+  <div class="background">
   <Search 
     :auto-search="true" 
     initial-query="helvetica red poster"
     :allow-zoom="true"
     @item-zoom="handleItemZoom"
   />
+  </div>
 </template>
 
 
