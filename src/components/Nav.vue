@@ -73,8 +73,8 @@ const goToProjects = () => {
 </script>
 
 <template>
-  <nav class=" background flex items-center justify-center gap-4 py-3 ">
-    <div v-if="!user" class="flex items-center w-full sm:w-auto">
+  <nav class=" background fixed top-2 left-0 w-full flex justify-center py-4">
+    <div v-if="!user" class="flex items-center  sm:w-auto">
       <!-- BOTTONE LOGIN GOOGLE -->
       <button
         @click="loginWithGoogle" 
@@ -83,7 +83,7 @@ const goToProjects = () => {
        <span>Connect with Google</span>
       </button>
     </div>
-    <div v-else class="justify-center flex flex-row sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto px-5">
+    <div v-else class="justify-center flex flex-row sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
       <!-- BOTTONE NUOVO PROGETTO (first element) -->
       <button
         v-if="openProjectModal"

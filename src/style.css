@@ -45,8 +45,6 @@
       justify-center
       items-center
       gap-2
-      w-full
-      sm:w-auto
       whitespace-nowrap;
   }
   .container-logo {
@@ -54,7 +52,6 @@
     flex
     items-center
     justify-start
-    mx-auto
     px-4
 
     ;
