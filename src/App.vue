@@ -134,6 +134,23 @@ const handleProjectSaved = () => {
 // BOTTONI GRIGLIE O MAPPA
 lightboxLayout: 'grid' | 'map'
 
+// ZOOM PER MAPPA
+const zoomLevel = ref(1)
+const zoomStep = 0.1
+const maxZoom = 2.5
+const minZoom = 0.4
+
+const zoomIn = () => {
+  if (zoomLevel.value < maxZoom) {
+    zoomLevel.value = Math.round((zoomLevel.value + zoomStep) * 100) / 100
+  }
+}
+
+const zoomOut = () => {
+  if (zoomLevel.value > minZoom) {
+    zoomLevel.value = Math.round((zoomLevel.value - zoomStep) * 100) / 100
+  }
+}
 
 </script>
 
@@ -165,8 +182,10 @@ lightboxLayout: 'grid' | 'map'
       />
     </div>
 
+
     <!-- BOTTONI -->
     <Nav class="absolute left-1/2 -translate-x-1/2" />
+
 
   </div>
 </header>
@@ -174,24 +193,6 @@ lightboxLayout: 'grid' | 'map'
   <RouterView />
 </main>
 
-
-
-
-
-
-<Gallery />
-    
-      <pre v-if="global.debug" class="mb-8 container mx-auto overflow-x-auto">{{ global }}</pre>
-      <RouterView />
-      <!-- Hidden ProjectForm, used only for modal -->
-      <ProjectForm ref="projectFormRef" @project-saved="handleProjectSaved" />
-      <!-- LightBox component for image zoom -->
-      <LightBox 
-        :show="global.lightbox.show" 
-        :image-url="global.lightbox.imageUrl"
-        @close="closeLightbox"
-    
-      />
 
 </template>
 

@@ -203,7 +203,7 @@
 <template>
   <div>
     <!-- Search input and button -->
-    <div class="flex gap-2 mb-8 mx-6">
+    <div class="flex gap-2 mb-8 mt-8 mx-40 justify-center">
       <input
         v-model="searchQuery"
         type="text"
