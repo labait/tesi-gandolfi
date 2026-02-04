@@ -24,8 +24,8 @@ onMounted(() => {
 const loginWithGoogle = async () => {
   try {
     await signInWithPopup(auth, googleProvider)
-    // Redirect to projects after successful login
-    router.push('/projects')
+    // Redirect to homepage after successful login
+    router.push({ name: 'Homepage' })
   } catch (error) {
     console.error('Error during login:', error)
     let errorMessage = 'Error during login'
@@ -56,7 +56,7 @@ const confirmLogout = async () => {
   try {
     await signOut(auth)
     // Navigate to home page after logout
-    router.push({ name: 'Homepage', query: { force: 'true' } })
+    router.push({ name: 'Homepage' })
   } catch (error) {
     console.error('Error during logout:', error)
     alert('Error during logout. Please try again.')
