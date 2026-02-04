@@ -17,22 +17,25 @@ const images = [
 </script>
 
 <template>
-  <!-- BOTTONI MODALITÀ -->
-  <div class="flex gap-4 justify-center mb-8">
+<!-- BOTTONI MODALITÀ -->
+<div class="fixed bottom-4 left-0 w-full z-40 flex justify-center">
+  <div class="flex gap-4 background px-4 py-2 rounded-xl shadow-lg">
     <button
       @click="layoutMode = 'grid'"
-      :class="layoutMode === 'grid' ? 'btn-secondary' : 'btn-disabled'"
+      class="btn-header"
     >
       Griglia
     </button>
 
     <button
       @click="layoutMode = 'map'"
-      :class="layoutMode === 'map' ? 'btn-secondary' : 'btn-disabled'"
+      class="btn-header"
     >
       Mappa
     </button>
   </div>
+</div>
+
 
   <!-- MODALITÀ 1: GRID -->
   <div
@@ -65,4 +68,5 @@ const images = [
       @click="openLightbox(img)"
     />
   </div>
+
 </template>

@@ -52,6 +52,7 @@ onBeforeUnmount(() => {
     class="fixed inset-0 flex items-center justify-center z-50"
     :style="{ backgroundColor: 'rgb(61, 61, 58)' }"
     @click="handleOverlayClick"
+    class="btn-default"
   >
     <div class="relative w-full h-full flex items-center justify-center">
       
@@ -59,7 +60,6 @@ onBeforeUnmount(() => {
       <button
         @click="handleClose"
         class="absolute top-6 right-6 p-2 rounded-full shadow-md transition hover:opacity-80"
-        :style="{ backgroundColor: 'rgb(244, 241, 229)' }"
         title="Close"
       >
         <XMarkIcon class="w-6 h-6 text-gray-800" />

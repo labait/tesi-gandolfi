@@ -203,12 +203,12 @@
 <template>
   <div>
     <!-- Search input and button -->
-    <div class="flex gap-2 mb-8">
+    <div class="flex gap-2 mb-8 mx-6">
       <input
         v-model="searchQuery"
         type="text"
         placeholder="define your search, ie. helvetica red poster"
-        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        class="flex-1 px-4 py-2 border border-[rgb(105,192,172)] rounded-lg focus:ring-2  focus:border-transparent"
         @keyup.enter="handleSearch"
       />
       <button
@@ -282,10 +282,4 @@
 
 
 <style scoped>
-  .bg-blue-600 {
-    background-color: rgb(104, 132, 194);
-  }
-  .text-white {
-    color: rgb(244, 241, 229);
-  }
 </style>
