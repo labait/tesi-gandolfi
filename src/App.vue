@@ -120,8 +120,8 @@ const closeLightbox = () => {
 
 // NAVIGAZIONE ALL'HOMEPAGE
 const goToHomepage = () => {
-  // Always navigate to Homepage, bypassing guard that redirects to /projects
-  router.push({ name: 'Homepage', query: { force: 'true' } })
+  // Navigate to Homepage
+  router.push({ name: 'Homepage' })
 }
 
 // HANDLER EVENTO SALVATAGGIO PROGETTO
