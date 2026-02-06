@@ -134,23 +134,7 @@ const handleProjectSaved = () => {
 // BOTTONI GRIGLIE O MAPPA
 lightboxLayout: 'grid' | 'map'
 
-// ZOOM PER MAPPA
-const zoomLevel = ref(1)
-const zoomStep = 0.1
-const maxZoom = 2.5
-const minZoom = 0.4
 
-const zoomIn = () => {
-  if (zoomLevel.value < maxZoom) {
-    zoomLevel.value = Math.round((zoomLevel.value + zoomStep) * 100) / 100
-  }
-}
-
-const zoomOut = () => {
-  if (zoomLevel.value > minZoom) {
-    zoomLevel.value = Math.round((zoomLevel.value - zoomStep) * 100) / 100
-  }
-}
 
 </script>
 
@@ -172,13 +156,13 @@ const zoomOut = () => {
       <img
         src="/logo_prisma_definitivo.svg"
         alt="Prisma Logo"
-        class="hidden sm:block h-15 w-auto"
+        class="hidden sm:block h-20 w-auto"
       />
       <!-- Mobile -->
       <img
         src="/logo_rid_prisma.svg"
         alt="Prisma Rid Logo"
-        class="block sm:hidden h-15 w-auto"
+        class="block sm:hidden h-20 w-auto "
       />
     </div>
 

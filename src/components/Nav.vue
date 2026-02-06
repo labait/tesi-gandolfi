@@ -70,6 +70,7 @@ const cancelLogout = () => {
 const goToProjects = () => {
   router.push('/projects')
 }
+
 </script>
 
 <template>
@@ -88,7 +89,7 @@ const goToProjects = () => {
       <button
         v-if="openProjectModal"
         @click="openProjectModal"
-        class="btn-header"
+        class="btn-header1"
       >
         <PlusIcon class="w-4 h-4" />
         <span>New Project</span>
@@ -97,7 +98,7 @@ const goToProjects = () => {
       <!-- BOTTONE VAI AI PROGETTI -->
       <button
         @click="goToProjects" 
-        class="btn-header"
+        class="btn-header1"
       >
         <Squares2X2Icon class="w-4 h-4" />
         <span>My Projects</span>
@@ -112,7 +113,7 @@ const goToProjects = () => {
       <!-- BOTTONE LOGOUT (last element) -->
       <button
         @click="handleLogoutClick"
-        class="btn-header"
+        class="btn-header1"
       >
         <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
         <span>Logout</span>

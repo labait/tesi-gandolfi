@@ -136,7 +136,7 @@ const handleZoomClick = (e, item) => {
 
 <template> <!-- GRIGLIA RESPONSIVE-->
   <div 
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-10">
     <div 
       v-for="item in items" 
       :key="item.id || item.image" 
@@ -144,9 +144,9 @@ const handleZoomClick = (e, item) => {
       class="max-h-64 relative hover:scale-110 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
-      <div class="absolute top-2 right-2 z-20 flex gap-2">
+      <div class="absolute top-2 right-2 z-20 flex gap-2 ">
         <!-- Container per Delete (visibile solo su hover) -->
-        <div v-if="allowDelete" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div v-if="allowDelete" class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity ">
           <!-- Trash Icon -->
           <button
             @click="handleDeleteClick($event, item)"
@@ -212,3 +212,7 @@ const handleZoomClick = (e, item) => {
     @cancel="cancelDelete"
   />
 </template>
+
+<style scoped>
+
+  </style>

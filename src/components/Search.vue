@@ -208,7 +208,7 @@
         v-model="searchQuery"
         type="text"
         placeholder="define your search, ie. helvetica red poster"
-        class="flex-1 px-4 py-2 border border-[rgb(105,192,172)] rounded-lg focus:ring-2  focus:border-transparent"
+        class="flex-1 px-4 py-2  bordergradient rounded-lg focus:ring-1  focus:bordergradient"
         @keyup.enter="handleSearch"
       />
       <button
@@ -283,3 +283,4 @@
 
 <style scoped>
 </style>
+[rgb(105,192,172)]

@@ -57,12 +57,9 @@ const handleCancel = () => {
 
 <style scoped>
   .bg-black {
-    background-color: rgb(61, 61, 58);
+    background-color: rgba(193, 195, 188, 0.811);
   }
   .bg-white {
-    background-color: rgb(244, 241, 229);
-  }
-  .bg-blue-600 {
-    background-color: rgb(104, 132, 194);
+    background-color: rgb(245, 246, 239);
   }
 </style>

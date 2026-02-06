@@ -96,10 +96,10 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="text-4xl font-bold mb-6">List of Projects</div>
+    <div class="text-2xl font-bold ml-10 mb-1 mt-10">List of Projects</div>
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
-        <p class="text-gray-600">Loading projects...</p>
+        <p class="textgradient font-bold">Loading projects...</p>
       </div>
       <div v-else-if="projects.length > 0">
         <List 

@@ -4,20 +4,21 @@
   /* Tailwind component classes */
   .btn-default {
     background-color: rgb(105,192,172);
+     border-color: rgb(105,192,172) ; 
     @apply  
       cursor-pointer
+      border-1
       px-4
       py-1.5
       text-white
       font-semibold
       rounded-lg
       shadow-lg
-      hover:bg-[rgb(60,150,145)]
+      hover:bg-[rgb(245,246,239)]
+      hover:text-[rgb(105,192,172)]
+      hover:border-[rgb(105,192,172)]
+      hover:border-1
       transition-colors
-      focus:outline-none
-      focus:ring-2
-      focus:ring-blue-500
-      focus:ring-offset-2
       flex
       items-center
       justify-center
@@ -31,9 +32,9 @@
     @apply  
       cursor-pointer
       px-4
-      py-1.5
+      py-3
       text-white
-      text-xs
+      text-sm
       font-semibold
       rounded-lg
       shadow-lg
@@ -47,6 +48,32 @@
       gap-2
       whitespace-nowrap;
   }
+  .btn-header1 {
+    background-color: rgb(245,246,239);
+    border-color: rgb(105,192,172) ;
+   
+    @apply  
+      cursor-pointer
+      px-4
+      py-3
+      border-1
+      text-[rgb(105,192,172)]
+      text-sm
+      font-semibold
+      rounded-lg
+      shadow-lg
+      hover:bg-[rgb(105,192,172)]
+      hover:text-[rgb(245,246,239)]
+      transition-colors
+      focus:outline-none
+      focus:ring-2
+      flex
+      justify-center
+      items-center
+      gap-2
+      whitespace-nowrap;
+  }
+
   .container-logo {
   @apply 
     flex
@@ -63,5 +90,23 @@
     ;
 }
 
+.bordergradient {
+  
+  border:  solid transparent;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(to right, #93c463, #6884c2, #ea5160) border-box;
+  @apply 
+  border-2
+    ;
+}
+
+.textgradient {
+  background: linear-gradient(to right, #93c463, #6884c2, #ea5160);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  
+}
 
 }
