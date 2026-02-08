@@ -1,3 +1,4 @@
+<!-- PAGINA PROGETTI -->
 <script setup>
 import { ref, onMounted, inject, onUnmounted } from 'vue'
 import { auth, db } from '../Firebase'

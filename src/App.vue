@@ -12,6 +12,7 @@ import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
 // import LightboxGrid from './components/LightboxGrid.vue' //PROVAAAAA
 import Gallery from './components/Gallery.vue' //PROVAAAAA
+import LightboxGrid from './components/LightboxGrid.vue'
 
 const router = useRouter()
 const projectFormRef = ref(null)
@@ -170,14 +171,14 @@ lightboxLayout: 'grid' | 'map'
     <!-- BOTTONI -->
     <Nav class="absolute left-1/2 -translate-x-1/2" />
 
+ 
+
 
   </div>
 </header>
 <main class="pt-20">
   <RouterView />
 </main>
-
-
 </template>
 
 

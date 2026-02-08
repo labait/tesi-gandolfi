@@ -1,3 +1,4 @@
+<!-- FINESTRA PROGETTO -->
 <script setup>
 import { ref, onMounted, onBeforeUnmount, inject, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'

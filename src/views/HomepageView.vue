@@ -3,6 +3,7 @@ import { ref, onMounted, inject } from 'vue'
 import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import Search from '../components/Search.vue'
+import LightboxGrid from '../components/LightboxGrid.vue'
 
 const user = ref(null)
 const openLightbox = inject('openLightbox')
@@ -37,6 +38,7 @@ console.log(items)
     @item-zoom="handleItemZoom"
   />
   </div>
+  <LightboxGrid />
 </template>
 
 

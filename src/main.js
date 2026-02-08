@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import './style.css'
+import LightboxGrid from './components/LightboxGrid.vue' 
 
 // Handle Firebase action codes in URL on app load
 const urlParams = new URLSearchParams(window.location.search)
