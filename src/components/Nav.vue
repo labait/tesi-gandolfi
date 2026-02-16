@@ -1,4 +1,4 @@
-<!-- HEADER BOTTONI -->
+ <!-- HEADER BOTTONI -->
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
@@ -6,132 +6,111 @@ import { auth, googleProvider } from '../Firebase'
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
 import { PlusIcon, Squares2X2Icon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/24/outline'
 import DialogBox from './DialogBox.vue'
-
 const router = useRouter()
 const user = ref(null)
 const openProjectModal = inject('openProjectModal')
-
 // DialogBox state for logout confirmation
 const showLogoutDialog = ref(false)
-
 onMounted(() => {
-  // Listen for authentication state changes
-  onAuthStateChanged(auth, (currentUser) => {
-    user.value = currentUser
+// Listen for authentication state changes
+onAuthStateChanged(auth, (currentUser) => {
+user.value = currentUser
   })
 })
-
 const loginWithGoogle = async () => {
-  try {
-    await signInWithPopup(auth, googleProvider)
-    // Redirect to homepage after successful login
-    router.push({ name: 'Homepage' })
+try {
+await signInWithPopup(auth, googleProvider)
+// Redirect to homepage after successful login
+router.push({ name: 'Homepage' })
   } catch (error) {
-    console.error('Error during login:', error)
-    let errorMessage = 'Error during login'
-    
-    if (error.code === 'auth/popup-closed-by-user') {
-      errorMessage = 'Login cancelled. Please try again.'
+console.error('Error during login:', error)
+let errorMessage = 'Error during login'
+if (error.code === 'auth/popup-closed-by-user') {
+errorMessage = 'Login cancelled. Please try again.'
     } else if (error.code === 'auth/popup-blocked') {
-      errorMessage = 'Popup blocked. Please enable popups for this site.'
+errorMessage = 'Popup blocked. Please enable popups for this site.'
     } else if (error.code === 'auth/network-request-failed') {
-      errorMessage = 'Connection error. Please check your internet connection.'
+errorMessage = 'Connection error. Please check your internet connection.'
     } else if (error.code === 'auth/invalid-action-code') {
-      errorMessage = 'The authentication link is invalid or expired.'
+errorMessage = 'The authentication link is invalid or expired.'
     } else if (error.message) {
-      errorMessage = error.message
+errorMessage = error.message
     }
-    
-    alert(errorMessage)
+alert(errorMessage)
   }
 }
-
 const handleLogoutClick = () => {
-  // Show confirmation dialog instead of logging out directly
-  showLogoutDialog.value = true
+// Show confirmation dialog instead of logging out directly
+showLogoutDialog.value = true
 }
-
 const confirmLogout = async () => {
-  showLogoutDialog.value = false
-  try {
-    await signOut(auth)
-    // Navigate to home page after logout
-    router.push({ name: 'Homepage' })
+showLogoutDialog.value = false
+try {
+await signOut(auth)
+// Navigate to home page after logout
+router.push({ name: 'Homepage' })
   } catch (error) {
-    console.error('Error during logout:', error)
-    alert('Error during logout. Please try again.')
+console.error('Error during logout:', error)
+alert('Error during logout. Please try again.')
   }
 }
-
 const cancelLogout = () => {
-  showLogoutDialog.value = false
+showLogoutDialog.value = false
 }
-
 const goToProjects = () => {
-  router.push('/projects')
+router.push('/projects')
 }
-
 </script>
-
 <template>
-  <nav class=" background fixed top-2 left-0 w-full flex justify-center py-4">
-    <div v-if="!user" class="flex items-center  sm:w-auto">
-      <!-- BOTTONE LOGIN GOOGLE -->
-      <button
-        @click="loginWithGoogle" 
-        class="btn-default"
-      >
-       <span>Connect with Google</span>
-      </button>
-    </div>
-    <div v-else class="justify-center flex flex-row sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-      <!-- BOTTONE NUOVO PROGETTO (first element) -->
-      <button
-        v-if="openProjectModal"
+<div v-if="!user" class="flex items-center">
+    <!-- BOTTONE LOGIN GOOGLE -->
+    <button @click="loginWithGoogle" class="btn-header1">
+      <span>Connect with Google</span>
+    </button>
+  </div>
+  <div v-else class="flex flex-row items-center gap-3">
+<!-- BOTTONE NUOVO PROGETTO (first element) -->
+<button
+v-if="openProjectModal"
         @click="openProjectModal"
-        class="btn-header1"
-      >
-        <PlusIcon class="w-4 h-4" />
-        <span>New Project</span>
-      </button>
-
-      <!-- BOTTONE VAI AI PROGETTI -->
-      <button
+class="btn-header1"
+>
+<PlusIcon class="w-4 h-4" />
+<span>New Project</span>
+</button>
+<!-- BOTTONE VAI AI PROGETTI -->
+<button
         @click="goToProjects" 
-        class="btn-header1"
-      >
-        <Squares2X2Icon class="w-4 h-4" />
-        <span>My Projects</span>
-      </button>
-      <img
-        v-if="false"
-        referrerpolicy="no-referrer"
+class="btn-header1"
+>
+<Squares2X2Icon class="w-4 h-4" />
+<span>My Projects</span>
+</button>
+<img
+v-if="false"
+referrerpolicy="no-referrer"
         :src="user.photoURL"
         :alt="user.displayName"
-        class="w-10 h-10 rounded-full border-2 border-gray-300 cursor-pointer"
-      />
-      <!-- BOTTONE LOGOUT (last element) -->
-      <button
+class="w-10 h-10 rounded-full border-2 border-gray-300 cursor-pointer"
+/>
+<!-- BOTTONE LOGOUT (last element) -->
+<button
         @click="handleLogoutClick"
-        class="btn-header1"
-      >
-        <ArrowRightStartOnRectangleIcon class="w-4 h-4" />
-        <span>Logout</span>
-      </button>
-    </div>
-  </nav>
-  
-  <!-- DialogBox PER CONFERMA LOGOUT-->
-  <DialogBox
+class="btn-header1"
+>
+<ArrowRightStartOnRectangleIcon class="w-4 h-4" />
+<span>Logout</span>
+</button>
+</div>
+
+<!-- DialogBox PER CONFERMA LOGOUT-->
+<DialogBox
     :show="showLogoutDialog"
-    title="Confirm Logout"
-    message="Are you sure you want to logout?"
+title="Confirm Logout"
+message="Are you sure you want to logout?"
     @confirm="confirmLogout"
     @cancel="cancelLogout"
-  />
+ />
 </template>
-
 <style scoped>
-
-</style>
-
+</style> 
