@@ -37,6 +37,14 @@
     allowZoom: {
       type: Boolean,
       default: false
+    },
+    showInHeader: {
+      type: Boolean,
+      default: false
+    },
+    hideViewModeToggle: {
+      type: Boolean,
+      default: false
     }
   })
   
@@ -44,7 +52,8 @@
     'item-deleted',
     'item-bookmarked',
     'item-added',
-    'item-zoom'
+    'item-zoom',
+    'search-results'
   ])
   
   const global = inject('global')
@@ -114,6 +123,11 @@
       } else {
         searchResults.value = []
       }
+
+      // Emit search results if in header mode
+      if (props.showInHeader) {
+        emit('search-results', searchResults.value)
+      }
   
     } catch (err) {
       console.error('Error during search:', err)
@@ -140,7 +154,7 @@
   // Navigate to previous page
   const goToPreviousPage = () => {
     if (currentStartIndex.value > 1) {
-      const prevStartIndex = Math.max(1, currentStartIndex.value - 20)
+      const prevStartIndex = Math.max(1, currentStartIndex.value - 10)
       currentStartIndex.value = prevStartIndex
       performSearch(prevStartIndex)
     }
@@ -167,7 +181,7 @@
   
   // Computed property for current page number
   const currentPage = computed(() => {
-    return Math.ceil(currentStartIndex.value / 20)
+    return Math.ceil(currentStartIndex.value / 10)
   })
   
   // Handle events from List component
@@ -203,31 +217,40 @@
 <template>
   <div>
     <!-- Search input and button -->
-    <div class="flex gap-3 mb-8 ml-80 mr-130 justify-center ">
+    <div 
+      :class="showInHeader 
+        ? 'flex gap-2 items-center' 
+        : 'flex gap-2 mb-8 mt-8 px-8 md:px-20 lg:px-40 w-full'"
+    >
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="define your search, ie. helvetica red poster"
-        class="flex-1 px-4 py-2  bordergradient rounded-lg focus:ring-1  focus:bordergradient z-60"
+        :placeholder="showInHeader ? 'Search images...' : 'define your search, ie. helvetica red poster'"
+        :class="showInHeader 
+          ? 'flex-1 px-3 py-2 text-sm bordergradient rounded-lg focus:ring-1 focus:bordergradient' 
+          : 'flex-1 px-4 py-2 bordergradient rounded-lg focus:ring-1 focus:bordergradient'"
         @keyup.enter="handleSearch"
+        
       />
       <button
         @click="handleSearch"
         :disabled="global.loading || !searchQuery.trim()"
-        class="btn-header1 disabled:opacity-50 disabled:cursor-not-allowed z-60"
+        :class="showInHeader 
+          ? 'btn-header1 disabled:opacity-50 disabled:cursor-not-allowed px-3 py-2' 
+          : 'btn-header1 disabled:opacity-50 disabled:cursor-not-allowed'"
       >
         <MagnifyingGlassIcon class="w-5 h-5" />
-       
+        
       </button>
     </div>
 
-    <!-- Error message -->
-    <div v-if="error" class="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+    <!-- Error message (solo se non in header) -->
+    <div v-if="error && !showInHeader" class="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
       <p class="text-red-800">{{ error }}</p>
     </div>
 
-    <!-- Pagination links (before results) -->
-    <div v-if="hasSearched && !global.loading && searchResults.length > 0" class="mb-4">
+    <!-- Pagination links (before results) - solo se non in header -->
+    <div v-if="!showInHeader && hasSearched && !global.loading && searchResults.length > 0" class="mb-4">
       <ListPagination
         :show="true"
         :has-previous-page="hasPreviousPage()"
@@ -241,14 +264,15 @@
       />
     </div>
 
-    <!-- Results -->
-    <div v-if="hasSearched && !global.loading && searchResults.length > 0">
+    <!-- Results - solo se non in header -->
+    <div v-if="!showInHeader && hasSearched && !global.loading && searchResults.length > 0">
       <List 
         :items="searchResults" 
         :allow-delete="allowDelete"
         :allow-bookmark="allowBookmark"
         :allow-add="allowAdd"
         :allow-zoom="allowZoom"
+        :hide-view-mode-toggle="hideViewModeToggle"
         :is-bookmarked-fn="isBookmarkedFn"
         :is-add-fn="isAddFn"
         @item-deleted="handleItemDeleted"
@@ -258,13 +282,13 @@
       />
     </div>
 
-    <!-- No results message -->
-    <div v-else-if="hasSearched && !global.loading" class="text-center py-8">
+    <!-- No results message - solo se non in header -->
+    <div v-else-if="!showInHeader && hasSearched && !global.loading" class="text-center py-8">
       <p class="text-gray-600">No results found. Try a different search query.</p>
     </div>
 
-    <!-- Pagination links (after results) -->
-    <div v-if="hasSearched && !global.loading && searchResults.length > 0" class="mt-8">
+    <!-- Pagination links (after results) - solo se non in header -->
+    <div v-if="!showInHeader && hasSearched && !global.loading && searchResults.length > 0" class="mt-8">
       <ListPagination
         :show="true"
         :has-previous-page="hasPreviousPage()"
@@ -283,3 +307,4 @@
 
 <style scoped>
 </style>
+[rgb(105,192,172)]

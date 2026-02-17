@@ -151,9 +151,11 @@ const loadProject = async () => {
     const projectSnap = await getDoc(projectRef)
 
     if (projectSnap.exists()) {
+      const data = projectSnap.data()
       project.value = {
         id: projectSnap.id,
-        ...projectSnap.data()
+        ...data,
+        related: data.related || []  // Ensure related is always an array
       }
       // Populate global.project with the project object
       global.value.project = project.value
@@ -245,6 +247,16 @@ const handleAnalyze = async () => {
 
 onMounted(() => {
   loadProject()
+  
+  // Listen for image-added-to-project event
+  const handleImageAdded = (event) => {
+    if (event.detail.projectId === route.params.id) {
+      // Reload the project to reflect the new related image
+      loadProject()
+    }
+  }
+  
+  window.addEventListener('image-added-to-project', handleImageAdded)
 })
 
 // Watch route to reload project if ID changes
@@ -255,16 +267,19 @@ watch(() => route.params.id, (newId, oldId) => {
 })
 
 onBeforeUnmount(() => {
+  // Remove event listener when component unmounts
+  window.removeEventListener('image-added-to-project', () => {})
   // Reset global.project when component is unmounted
   global.value.project = null
 })
 
 const relatedImages = computed(() => {
-  return project.value?.related.map(image => ({
+  const related = project.value?.related || []
+  return related.map(image => ({
     id: image,
     image: image,
     alt: 'Related image'
-  })) || []
+  }))
 })
 
 // Handle zoom event from Search and List components
@@ -276,7 +291,7 @@ const handleItemZoom = (item) => {
 </script>
 
 <template>
-  <div class="container mx-auto">
+  <div class="container mx-auto pl-5 pr-5">
     <div v-if="error" class="text-center py-12">
       <div class="text-red-600 text-5xl mb-4">⚠️</div>
       <h2 class="text-2xl font-bold text-gray-800 mb-2">Error</h2>
@@ -284,7 +299,7 @@ const handleItemZoom = (item) => {
     </div>
 
     <div v-else-if="project" class="">
-      <h1 class="text-4xl font-bold mb-6">
+      <h1 class="text-3xl font-bold mb-6">
         {{ project.titolo || 'Untitled Project' }}
       </h1>
       
@@ -301,11 +316,11 @@ const handleItemZoom = (item) => {
         <p class="text-gray-700 whitespace-pre-wrap">{{ project.note }}</p>
       </div>
 
-      <div class="mb-8 flex justify-center">
+      <div class="mb-5 flex justify-center">
         <button
           @click="handleAnalyze"
           :disabled="isAnalyzing"
-          class="btn-default disabled:opacity-50 disabled:cursor-not-allowed"
+          class="btn-header1  disabled:cursor-not-allowed"
         >
           <MagnifyingGlassIcon class="w-5 h-5" />
           <span v-if="isAnalyzing">Analyzing...</span>
@@ -321,6 +336,7 @@ const handleItemZoom = (item) => {
         :allow-bookmark="true" 
         :allow-add="true"
         :allow-zoom="true"
+        :hide-view-mode-toggle="true"
         :is-bookmarked-fn="isBookmarked" 
         :is-add-fn="isAdded" 
         @item-bookmarked="handleItemBookmarked" 
@@ -341,7 +357,7 @@ const handleItemZoom = (item) => {
     </div>
 
     <div v-if="project?.analysis.colors" class="mb-8">
-      <h2 class="text-2xl font-semibold mb-2">Color palette</h2>
+      <h2 class="text-2xl  text-[rgb(41,42,42)] font-semibold mb-2">Color palette</h2>
       <div class="flex flex-wrap gap-2">
         <div v-for="color in project.analysis.colors.split(',').map(color => color.trim())" :key="color" class="flex items-center gap-2 flex-col">
           <div class="w-20 h-20 rounded-xl" :style="{ backgroundColor: color }"></div>
@@ -351,7 +367,7 @@ const handleItemZoom = (item) => {
     </div>
 
     <div>
-      <h2 class="text-2xl font-semibold mb-4">Search images</h2>
+      <h2 class="text-2xl text-[rgb(41,42,42)] font-semibold mb-4">Search images</h2>
       <div v-if="search_text" class="mb-8"> 
         <Search 
           :auto-search="true" 
@@ -359,6 +375,7 @@ const handleItemZoom = (item) => {
           :allow-bookmark="true"
           :allow-add="true"
           :allow-zoom="true"
+          :hide-view-mode-toggle="true"
           :is-bookmarked-fn="isBookmarked"
           :is-add-fn="isAdded"
           @item-bookmarked="handleItemBookmarked"

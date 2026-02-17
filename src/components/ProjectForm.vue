@@ -222,6 +222,7 @@ const saveProject = async () => {
 
   try {
     let imageUrl = null
+    let analysis = null
 
     // If there's an image, upload it to Firebase Storage
     if (imageFile.value) {
@@ -237,9 +238,46 @@ const saveProject = async () => {
         // Get the download URL
         imageUrl = await getDownloadURL(imageRef)
         console.log('Image uploaded successfully:', imageUrl)
+
+        // Analyze the image automatically
+        try {
+          const analysisResponse = await fetch('/.netlify/functions/analyze', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              imageUrl: imageUrl
+            })
+          })
+
+          if (analysisResponse.ok) {
+            const analysisData = await analysisResponse.json()
+            let analysisResult = analysisData.result
+            
+            // Parse if it's a JSON string
+            if (typeof analysisResult === 'string') {
+              try {
+                analysisResult = JSON.parse(analysisResult)
+              } catch (e) {
+                console.warn('Could not parse analysis result as JSON')
+              }
+            }
+
+            analysis = {
+              ...analysisResult,
+              analyzedAt: new Date().toISOString()
+            }
+            console.log('Image analysis completed:', analysis)
+          } else {
+            console.warn('Analysis failed, project will be saved without analysis')
+          }
+        } catch (analysisError) {
+          console.error('Error during image analysis:', analysisError)
+          // Continue without analysis
+        }
       } catch (storageError) {
         console.error('Error during image upload:', storageError)
-        // If there's an error with image upload, continue without image
         alert('Error during image upload. The project will be saved without image.')
       }
     }
@@ -250,7 +288,10 @@ const saveProject = async () => {
       titolo: formData.value.title,
       note: formData.value.notes || '',
       immagine: imageUrl || '',
-      createdAt: new Date()
+      analysis: analysis || null,
+      related: [],
+      createdAt: new Date(),
+      updatedAt: new Date().toISOString()
     }
 
     await addDoc(collection(db, 'projects'), projectData)
@@ -272,4 +313,7 @@ const saveProject = async () => {
 </script>
 
 <style scoped>
+body {
+  background-color: rgb(245, 246, 239);
+}
 </style>
