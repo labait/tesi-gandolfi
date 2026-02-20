@@ -1,6 +1,6 @@
 <!-- SEZIONE ELEMENTI SALVATI -->
 <script setup>
-import { ref, inject, defineProps, defineEmits, computed } from 'vue'
+import { ref, inject, defineProps, defineEmits, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import DialogBox from './DialogBox.vue'
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
@@ -69,24 +69,40 @@ let canvasStartX = 0
 let canvasStartY = 0
 
 // Posizioni delle immagini nella mappa (disposte in griglia a alveare)
+// Track screen width to adjust layout on small (smartphone) screens
+const screenWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+onMounted(() => {
+  const onResize = () => { screenWidth.value = window.innerWidth }
+  window.addEventListener('resize', onResize)
+  // keep reference to removal function
+  onUnmounted(() => window.removeEventListener('resize', onResize))
+})
+
 const imagePositions = computed(() => {
   const cols = Math.ceil(Math.sqrt(props.items.length))
   const rows = Math.ceil(props.items.length / cols)
-  
-  // Spaziatura per layout a alveare - aumentata per più distanziamento
-  const spacingX = 100 / (cols + 0.5)  // Più spazio orizzontale
-  const spacingY = 100 / (rows + 0.1)  // Più spazio verticale
-  
+
+  const isMobile = screenWidth.value <= 640 // smartphone breakpoint
+
+  // Spaziatura per layout a alveare
+  const baseSpacingX = 100 / (cols + 0.5)
+  const baseSpacingY = 100 / (rows + 0.1)
+  // Su mobile: mantiene un po' più di spazio orizzontale ma riduce lo spazio verticale
+  const spacingMultiplierX = isMobile ? 1.15 : 1
+  const spacingMultiplierY = isMobile ? 0.9 : 1
+  const spacingX = baseSpacingX * spacingMultiplierX
+  const spacingY = baseSpacingY * spacingMultiplierY
+
   return props.items.map((item, index) => {
     const col = index % cols
     const row = Math.floor(index / cols)
-    
+
     // Layout a alveare: le righe dispari sono sfalsate
     const xOffset = row % 2 === 1 ? spacingX * 0.5 : 0
     const x = spacingX * (col + 1) + xOffset
-    const y = spacingY * (row + 1)  // Aumentato per più distanziamento verticale
-    const size = 180  // Dimensione leggermente ridotta per il layout a alveare
-    
+    const y = spacingY * (row + 1)
+    const size = isMobile ? 140 : 180 // rimpicciolisci leggermente su smartphone
+
     return {
       ...item,
       x: x,
@@ -363,7 +379,7 @@ const handleZoomClick = (e, item) => {
 
   <!-- MODALITÀ GRIGLIA -->
   <div v-if="viewMode === 'grid'" 
-    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 mt-10">
+    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-5 gap-10 mt-10">
     <div 
       v-for="item in items" 
       :key="item.id || item.image" 

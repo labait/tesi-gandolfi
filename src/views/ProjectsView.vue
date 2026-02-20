@@ -107,7 +107,7 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="text-3xl text-[rgb(41,42,42)] font-semibold ml-120 mb-1 mt-5">My Projects</div>
+    <div class="text-3xl text-[rgb(41,42,42)] font-semibold text-center mb-2">My Projects</div>
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
         <p class="text-[rgb(41,42,42)] mt-20 font-semibold">Loading projects...</p>

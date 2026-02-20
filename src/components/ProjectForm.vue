@@ -110,7 +110,7 @@
             <button
               type="submit"
               :disabled="isSaving || !formData.title"
-              class="btn-default disabled:opacity-50 disabled:cursor-not-allowed"
+              class="btn-header1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span v-if="!isSaving">Save</span>
               <span v-else>Saving...</span>
