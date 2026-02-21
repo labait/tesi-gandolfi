@@ -84,10 +84,8 @@
   
     try {
       // Build URL with query and optional start parameter
-      let searchUrl = `/.netlify/functions/google-search?q=${encodeURIComponent(query)}`
-      if (startIndex > 1) {
-        searchUrl += `&start=${startIndex}`
-      }
+      let searchUrl = `/.netlify/functions/serper-search?q=${encodeURIComponent(query)}`
+      if (startIndex > 1) searchUrl += `&start=${startIndex}`
   
       // Call Netlify function for Google Search
       const response = await fetch(searchUrl, {
@@ -116,7 +114,7 @@
           .filter(item => item.link || item.image?.thumbnailLink) // Filter out items without image or link
           .map((item, index) => ({
             id: item.link || `result-${index}`,
-            image: item.link || item.image?.thumbnailLink || '',
+            image: item.thumbnailUrl || '',
             alt: item.title || 'Search result image',
             title: item.title || item.displayLink || ''
           }))
