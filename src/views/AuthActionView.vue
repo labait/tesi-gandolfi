@@ -106,7 +106,7 @@ onMounted(async () => {
         <p class="text-gray-600 mb-6">{{ error }}</p>
         <button
           @click="router.push('/')"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          class="btn-default"
         >
           Go to Homepage
         </button>
@@ -118,7 +118,7 @@ onMounted(async () => {
         <p class="text-gray-600 mb-6">{{ message }}</p>
         <button
           @click="router.push('/')"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          class="btn-default"
         >
           Go to Homepage
         </button>

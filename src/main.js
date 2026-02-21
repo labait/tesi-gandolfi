@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import './style.css'
 
+
 // Handle Firebase action codes in URL on app load
 const urlParams = new URLSearchParams(window.location.search)
 const mode = urlParams.get('mode')

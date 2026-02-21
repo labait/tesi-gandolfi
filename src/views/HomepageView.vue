@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, computed } from 'vue'
 import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
-import Search from '../components/Search.vue'
+import List from '../components/List.vue'
 
 const user = ref(null)
+const global = inject('global')
 const openLightbox = inject('openLightbox')
 
 onMounted(() => {
@@ -19,21 +20,31 @@ const handleItemZoom = (item) => {
   }
 }
 
-const items = Array(20).fill().map( (i, index) => {
-  return {
-    "image": `https://picsum.photos/800/600?p=${index}`
-  }
-})
-console.log(items)
+const handleItemDeleted = (itemId) => {
+  console.log('Item deleted:', itemId)
+}
+
+const handleItemBookmarked = (item) => {
+  console.log('Item bookmarked:', item)
+}
+
+const handleItemAdded = (item) => {
+  console.log('Item added:', item)
+}
+
+// Use search results from global state, or fallback to empty array
+const items = computed(() => global.value?.searchResults || [])
 
 </script>
 
 <template>
-  <Search 
-    :auto-search="true" 
-    initial-query="helvetica red poster"
+  <List 
+    :items="items"
     :allow-zoom="true"
     @item-zoom="handleItemZoom"
+    @item-deleted="handleItemDeleted"
+    @item-bookmarked="handleItemBookmarked"
+    @item-added="handleItemAdded"
   />
 </template>
 
