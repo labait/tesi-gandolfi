@@ -88,10 +88,12 @@ const imagePositions = computed(() => {
   const baseSpacingX = 100 / (cols + 0.5)
   const baseSpacingY = 100 / (rows + 0.1)
   // Su mobile: mantiene un po' più di spazio orizzontale ma riduce lo spazio verticale
-  const spacingMultiplierX = isMobile ? 1.15 : 1
-  const spacingMultiplierY = isMobile ? 0.9 : 1
-  const spacingX = baseSpacingX * spacingMultiplierX
-  const spacingY = baseSpacingY * spacingMultiplierY
+  const spacingMultiplierX = isMobile ? 6 : 1
+  const spacingMultiplierY = isMobile ? 0.8 : 1
+  // Aumenta lo spazio tra gli elementi (più evidente su desktop)
+  const spacingBoost = isMobile ? 1 : 3
+  const spacingX = baseSpacingX * spacingMultiplierX * spacingBoost
+  const spacingY = baseSpacingY * spacingMultiplierY * spacingBoost
 
   return props.items.map((item, index) => {
     const col = index % cols
