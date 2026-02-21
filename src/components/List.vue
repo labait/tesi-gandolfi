@@ -1,12 +1,12 @@
 <!-- SEZIONE ELEMENTI SALVATI -->
 <script setup>
-import { ref, inject, defineProps, defineEmits } from 'vue'
+import { ref, inject, defineProps, defineEmits, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import DialogBox from './DialogBox.vue'
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import { BookmarkIcon as BookmarkIconSolid } from '@heroicons/vue/24/solid'
 import { BookmarkIcon as BookmarkIconOutline } from '@heroicons/vue/24/outline'
-import { TrashIcon } from '@heroicons/vue/24/outline'
+import { TrashIcon, MapIcon, Squares2X2Icon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   items: {
@@ -48,6 +48,199 @@ const emit = defineEmits([
 
 const router = useRouter()
 const global = inject('global')
+
+// Modalità visualizzazione
+const viewMode = ref('grid') // 'grid' o 'map'
+
+// Stato per drag and drop della mappa
+const canvasRef = ref(null)
+const viewportRef = ref(null)
+const isDragging = ref(false)
+const dragMoved = ref(false)
+const zoomLevel = ref(1.5)
+
+let dragStartX = 0
+let dragStartY = 0
+let canvasStartX = 0
+let canvasStartY = 0
+
+// Posizioni delle immagini nella mappa (disposte in griglia regolare)
+const imagePositions = computed(() => {
+  const cols = Math.ceil(Math.sqrt(props.items.length))
+  const rows = Math.ceil(props.items.length / cols)
+  const spacingX = 100 / (cols + 0.5) // Spaziatura orizzontale percentuale
+  const spacingY = 100 / (rows + 0.5) // Spaziatura verticale percentuale
+  
+  return props.items.map((item, index) => {
+    const col = index % cols
+    const row = Math.floor(index / cols)
+    
+    const x = spacingX * (col + 1)
+    const y = spacingY * (row + 1)
+    const size = 200 // Dimensione fissa per tutte le immagini
+    
+    return {
+      ...item,
+      x: x,
+      y: y,
+      size: size,
+      rotation: 0  // Nessuna rotazione - immagini dritte
+    }
+  })
+})
+
+// Funzioni drag
+const startDrag = (e) => {
+  if (viewMode.value !== 'map') return
+  isDragging.value = true
+  dragMoved.value = false
+  dragStartX = e.clientX
+  dragStartY = e.clientY
+  
+  if (canvasRef.value) {
+    const transform = window.getComputedStyle(canvasRef.value).transform
+    if (transform && transform !== 'none') {
+      const matrix = new DOMMatrix(transform)
+      canvasStartX = matrix.m41
+      canvasStartY = matrix.m42
+    } else {
+      canvasStartX = 0
+      canvasStartY = 0
+    }
+  }
+}
+
+const onDrag = (e) => {
+  if (!isDragging.value || viewMode.value !== 'map') return
+  
+  const dx = e.clientX - dragStartX
+  const dy = e.clientY - dragStartY
+  
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    dragMoved.value = true
+  }
+  
+  if (canvasRef.value && viewportRef.value) {
+    const newX = canvasStartX + dx
+    const newY = canvasStartY + dy
+    
+    // Limita lo spostamento ai bordi dello schermo
+    const viewportWidth = viewportRef.value.offsetWidth
+    const viewportHeight = viewportRef.value.offsetHeight
+    const canvasWidth = viewportWidth * zoomLevel.value
+    const canvasHeight = viewportHeight * zoomLevel.value
+    
+    // Calcola i limiti
+    const maxX = 0
+    const minX = viewportWidth - canvasWidth
+    const maxY = 0
+    const minY = viewportHeight - canvasHeight
+    
+    // Applica i limiti
+    const boundedX = Math.max(minX, Math.min(maxX, newX))
+    const boundedY = Math.max(minY, Math.min(maxY, newY))
+    
+    canvasRef.value.style.transform = `translate(${boundedX}px, ${boundedY}px) scale(${zoomLevel.value})`
+  }
+}
+
+const endDrag = () => {
+  isDragging.value = false
+  setTimeout(() => {
+    dragMoved.value = false
+  }, 50)
+}
+
+// Funzioni zoom
+const handleWheel = (e) => {
+  if (viewMode.value !== 'map') return
+  e.preventDefault()
+  
+  const delta = e.deltaY > 0 ? -0.1 : 0.1
+  const newZoom = Math.max(0.5, Math.min(3, zoomLevel.value + delta))
+  zoomLevel.value = newZoom
+  
+  if (canvasRef.value && viewportRef.value) {
+    const transform = window.getComputedStyle(canvasRef.value).transform
+    let translateX = 0
+    let translateY = 0
+    
+    if (transform && transform !== 'none') {
+      const matrix = new DOMMatrix(transform)
+      translateX = matrix.m41
+      translateY = matrix.m42
+    }
+    
+    // Applica limiti
+    const viewportWidth = viewportRef.value.offsetWidth
+    const viewportHeight = viewportRef.value.offsetHeight
+    const canvasWidth = viewportWidth * newZoom
+    const canvasHeight = viewportHeight * newZoom
+    
+    const maxX = 0
+    const minX = viewportWidth - canvasWidth
+    const maxY = 0
+    const minY = viewportHeight - canvasHeight
+    
+    const boundedX = Math.max(minX, Math.min(maxX, translateX))
+    const boundedY = Math.max(minY, Math.min(maxY, translateY))
+    
+    canvasRef.value.style.transform = `translate(${boundedX}px, ${boundedY}px) scale(${newZoom})`
+  }
+}
+
+const zoomIn = () => {
+  zoomLevel.value = Math.min(3, zoomLevel.value + 0.2)
+  updateCanvasTransform()
+}
+
+const zoomOut = () => {
+  zoomLevel.value = Math.max(0.5, zoomLevel.value - 0.2)
+  updateCanvasTransform()
+}
+
+const resetView = () => {
+  zoomLevel.value = 1
+  if (canvasRef.value) {
+    canvasRef.value.style.transform = 'translate(0px, 0px) scale(1)'
+  }
+}
+
+const updateCanvasTransform = () => {
+  if (canvasRef.value && viewportRef.value) {
+    const transform = window.getComputedStyle(canvasRef.value).transform
+    let translateX = 0
+    let translateY = 0
+    
+    if (transform && transform !== 'none') {
+      const matrix = new DOMMatrix(transform)
+      translateX = matrix.m41
+      translateY = matrix.m42
+    }
+    
+    // Applica limiti
+    const viewportWidth = viewportRef.value.offsetWidth
+    const viewportHeight = viewportRef.value.offsetHeight
+    const canvasWidth = viewportWidth * zoomLevel.value
+    const canvasHeight = viewportHeight * zoomLevel.value
+    
+    const maxX = 0
+    const minX = viewportWidth - canvasWidth
+    const maxY = 0
+    const minY = viewportHeight - canvasHeight
+    
+    const boundedX = Math.max(minX, Math.min(maxX, translateX))
+    const boundedY = Math.max(minY, Math.min(maxY, translateY))
+    
+    canvasRef.value.style.transform = `translate(${boundedX}px, ${boundedY}px) scale(${zoomLevel.value})`
+  }
+}
+
+// Gestione click su immagine in modalità mappa
+const handleMapImageClick = (item) => {
+  if (dragMoved.value) return
+  handleItemClick(item)
+}
 
 // Stato per DialogBox
 const showDialog = ref(false)
@@ -134,14 +327,40 @@ const handleZoomClick = (e, item) => {
 
 </script>
 
-<template> <!-- GRIGLIA RESPONSIVE-->
-  <div 
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+<template>
+  <!-- TOGGLE BOTTONI MODALITÀ -->
+  <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex gap-3 bg-white/95 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-2xl border border-gray-200 ">
+    <button
+      @click="viewMode = 'grid'"
+      :class="viewMode === 'grid' 
+        ? 'bg-[245,246,239] border border-[rgb(105,192,172)] text-[rgb(105,192,172)]' 
+        : 'bg-[245,246,239] border border-gray-700 text-gray-700'"
+      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold "
+    >
+      <Squares2X2Icon class="w-5 h-5" />
+      Grid
+    </button>
+    
+    <button
+      @click="viewMode = 'map'"
+      :class="viewMode === 'map' 
+        ? 'bg-[245,246,239] border border-[rgb(105,192,172)] text-[rgb(105,192,172)]' 
+        : 'bg-[245,246,239] border border-gray-700 text-gray-700'"
+      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold"
+    >
+      <MapIcon class="w-5 h-5" />
+      Explore
+    </button>
+  </div>
+
+  <!-- MODALITÀ GRIGLIA -->
+  <div v-if="viewMode === 'grid'" 
+    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
     <div 
       v-for="item in items" 
       :key="item.id || item.image" 
       @click="handleItemClick(item)"
-      class="max-h-64 relative hover:scale-110 hover:shadow-lg hover:rotate-1 hover:z-10 transition-all duration-300 cursor-pointer group"
+      class="max-h-64 relative hover:scale-105 hover:shadow-lg  hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
       <div class="absolute top-2 right-2 z-20 flex gap-2">
@@ -198,9 +417,123 @@ const handleZoomClick = (e, item) => {
       
       <div v-if="item.title" class="title absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 rounded-b-lg z-10">{{ item.title }}</div>
       <img :src="item.image" :alt="item.alt" 
-        class="grayscale w-full h-full object-cover rounded-lg hover:grayscale-0" 
+        class=" w-full h-full object-cover rounded-lg " 
       />
     </div>
+  </div>
+
+  <!-- MODALITÀ MAPPA ESPLORABILE -->
+  <div v-else class="fixed inset-0 z-30 overflow-hidden bg-[rgb(245,246,239)]">
+    <!-- Controlli Zoom -->
+    <div class="absolute mt-90 right-6 z-40 flex flex-col gap-2 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-lg">
+      <button
+        @click="zoomIn"
+        class="p-3 bg-white  rounded-lg transition-all shadow-md font-bold text-xl btn-plusminus"
+        title="Zoom In"
+      >
+        +
+      </button>
+      <button
+        @click="zoomOut"
+        class="p-3 bg-white  rounded-lg transition-all shadow-md font-bold text-xl btn-plusminus"
+        title="Zoom Out"
+      >
+        −
+      </button>
+      <button
+        @click="resetView"
+        class="p-2 bg-white  rounded-lg transition-all shadow-md text-xs btn-plusminus"
+        title="Reset View"
+      >
+        ⟲
+      </button>
+    </div>
+
+    <!-- Viewport -->
+    <div
+      ref="viewportRef"
+      class="w-full h-full cursor-grab active:cursor-grabbing select-none"
+      @mousedown="startDrag"
+      @mousemove="onDrag"
+      @mouseup="endDrag"
+      @mouseleave="endDrag"
+      @wheel="handleWheel"
+    >
+      <!-- Canvas con immagini -->
+      <div
+        ref="canvasRef"
+        class="relative w-full h-full"
+        style="transform-origin: center center; will-change: transform;"
+      >
+        <div
+          v-for="pos in imagePositions"
+          :key="pos.id || pos.image"
+          @click="handleMapImageClick(pos)"
+          class="absolute cursor-pointer group transition-all duration-300 hover:z-50"
+          :style="{
+            left: `${pos.x}%`,
+            top: `${pos.y}%`,
+            width: `${pos.size}px`,
+            transform: `rotate(${pos.rotation}deg)`,
+          }"
+        >
+          <!-- Immagine container -->
+          <div class="relative w-full h-full rounded-xl overflow-hidden transition-all duration-300 hover:scale-105">
+            <img 
+              :src="pos.image" 
+              :alt="pos.alt"
+              class="w-full h-full transition-all duration-500"
+              draggable="false"
+            />
+            
+            <!-- Overlay con titolo -->
+            <div v-if="pos.title" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-sm font-semibold truncate">{{ pos.title }}</p>
+            </div>
+
+            <!-- Icone overlay (visibili su hover) -->
+            <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button
+                v-if="allowBookmark"
+                @click.stop="handleBookmarkClick($event, pos)"
+                class="p-2 bg-white/95 rounded-full hover:bg-white transition-all shadow-lg cursor-pointer backdrop-blur-sm"
+                :title="isBookmarked(pos) ? 'Remove from bookmarks' : 'Add to bookmarks'"
+              >
+                <BookmarkIconSolid v-if="isBookmarked(pos)" class="w-4 h-4 text-blue-600" />
+                <BookmarkIconOutline v-else class="w-4 h-4 text-gray-700" />
+              </button>
+              
+              <button
+                v-if="allowAdd"
+                @click.stop="handleAddClick($event, pos)"
+                class="p-2 rounded-full transition-all shadow-lg cursor-pointer backdrop-blur-sm"
+                :class="isAdded(pos) 
+                  ? 'bg-green-600 hover:bg-green-700' 
+                  : 'bg-white/95 hover:bg-white'"
+                :title="isAdded(pos) ? 'Remove from related' : 'Add to related'"
+              >
+                <PlusIcon 
+                  :class="isAdded(pos) 
+                    ? 'w-4 h-4 text-white' 
+                    : 'w-4 h-4 text-green-600'" 
+                />
+              </button>
+
+              <button
+                v-if="allowZoom"
+                @click.stop="handleZoomClick($event, pos)"
+                class="p-2 bg-white/95 rounded-full hover:bg-white transition-all shadow-lg cursor-pointer backdrop-blur-sm"
+                title="Zoom image"
+              >
+                <MagnifyingGlassIcon class="w-4 h-4 text-gray-700" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
   </div>
   
   <!-- DialogBox per conferma eliminazione -->
@@ -212,3 +545,7 @@ const handleZoomClick = (e, item) => {
     @cancel="cancelDelete"
   />
 </template>
+
+<style scoped>
+
+  </style>

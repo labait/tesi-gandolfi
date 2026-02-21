@@ -4,6 +4,7 @@ import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import Search from '../components/Search.vue'
 
+
 const user = ref(null)
 const openLightbox = inject('openLightbox')
 
@@ -29,13 +30,19 @@ console.log(items)
 </script>
 
 <template>
-  <div class="background">
-  <Search 
-    :auto-search="true" 
-    initial-query="helvetica red poster"
-    :allow-zoom="true"
-    @item-zoom="handleItemZoom"
-  />
+  <!-- Teleport per mettere Search nell'header -->
+  <Teleport to="header .flex-1">
+    <Search 
+      :auto-search="true" 
+      :initial-query="project.analysis.search_text"
+      :allow-bookmark="true"
+      :allow-add="true"
+      :allow-zoom="true"
+    />
+  </Teleport>
+
+  <div class="container mx-auto">
+    <!-- resto del contenuto -->
   </div>
 </template>
 

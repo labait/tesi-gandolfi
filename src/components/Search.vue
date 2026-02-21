@@ -140,7 +140,7 @@
   // Navigate to previous page
   const goToPreviousPage = () => {
     if (currentStartIndex.value > 1) {
-      const prevStartIndex = Math.max(1, currentStartIndex.value - 10)
+      const prevStartIndex = Math.max(1, currentStartIndex.value - 20)
       currentStartIndex.value = prevStartIndex
       performSearch(prevStartIndex)
     }
@@ -167,7 +167,7 @@
   
   // Computed property for current page number
   const currentPage = computed(() => {
-    return Math.ceil(currentStartIndex.value / 10)
+    return Math.ceil(currentStartIndex.value / 20)
   })
   
   // Handle events from List component
@@ -203,21 +203,21 @@
 <template>
   <div>
     <!-- Search input and button -->
-    <div class="flex gap-2 mb-8 mx-6">
+    <div class="flex gap-3 mb-8 ml-80 mr-130 justify-center ">
       <input
         v-model="searchQuery"
         type="text"
         placeholder="define your search, ie. helvetica red poster"
-        class="flex-1 px-4 py-2 border border-[rgb(105,192,172)] rounded-lg focus:ring-2  focus:border-transparent"
+        class="flex-1 px-4 py-2  bordergradient rounded-lg focus:ring-1  focus:bordergradient z-60"
         @keyup.enter="handleSearch"
       />
       <button
         @click="handleSearch"
         :disabled="global.loading || !searchQuery.trim()"
-        class="btn-default disabled:opacity-50 disabled:cursor-not-allowed"
+        class="btn-header1 disabled:opacity-50 disabled:cursor-not-allowed z-60"
       >
         <MagnifyingGlassIcon class="w-5 h-5" />
-        <span>Search</span>
+       
       </button>
     </div>
 

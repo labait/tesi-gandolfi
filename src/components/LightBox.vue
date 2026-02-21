@@ -59,7 +59,7 @@ onBeforeUnmount(() => {
     class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
     @click="handleOverlayClick"
   >
-    <div class="relative max-w-[100vw] max-h-[100vh] flex items-center justify-center">
+    <div class="relative max-w-[80vw] max-h-[80vh] flex items-center justify-center">
       <!-- Close button -->
       <button
         @click="handleClose"
@@ -87,6 +87,6 @@ onBeforeUnmount(() => {
     background-color: rgb(61, 61, 58);
   }
   .bg-white {
-    background-color: rgb(244, 241, 229);
+    background-color: rgb(245, 246, 239);
   }
 </style>

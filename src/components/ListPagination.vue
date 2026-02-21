@@ -50,24 +50,24 @@
   
 
 <template>
-  <div v-if="show" class="flex justify-center gap-2 items-center py-4">
+  <div v-if="show" class="flex justify-center gap-2 items-center py-2">
     <button
       v-if="showFirstPage"
       @click.prevent="handleFirst"
-      class=" text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
+      class=" text-lightblue hover:text-blue-800 transition-colors cursor-pointer text-sm"
     >
-      <ArrowUturnLeftIcon class="w-10 h-10" />
+      <ArrowUturnLeftIcon class="w-5 h-5" />
     </button>
 
     <button
       v-if="hasPreviousPage"
       @click.prevent="handlePrevious"
-      class=" text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
+      class=" text-lightblue hover:text-blue-800 transition-colors cursor-pointer text-sm"
     >
       <ArrowLeftIcon class="w-10 h-10" />
     </button>
-    <span v-else class="px-4 py-2 text-gray-400 text-4xl">
-      <ArrowLeftIcon class="w-10 h-10" />
+    <span v-else class="px-4 py-2 text-gray-400 text-sm">
+      <ArrowLeftIcon class="w-6 h-6" />
     </span>
 
     
@@ -78,17 +78,17 @@
     <button
       v-if="hasNextPage"
       @click.prevent="handleNext"
-      class="py-2 text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-4xl"
+      class="py-2 text-lightblue hover:text-blue-800 transition-colors cursor-pointer text-sm"
     >
-      <ArrowRightIcon class="w-10 h-10" />
+      <ArrowRightIcon class="w-6 h-6" />
     </button>
-    <span v-else class="py-2 text-gray-400 text-4xl">→</span>
+    <span v-else class="py-2 text-gray-400 text-sm">→</span>
   </div>
 </template>
 
 
 <style scoped>
-  .text-blue-600 {
-    color: rgb(104, 132, 194);
+  .text-lightblue {
+    color: rgb(105,192,172);
   }
 </style>
