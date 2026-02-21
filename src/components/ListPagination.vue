@@ -50,7 +50,7 @@
   
 
 <template>
-  <div v-if="show" class="flex justify-center gap-2 items-center py-2">
+  <div v-if="show" class="flex justify-center gap-2 items-center py-2 ">
     <button
       v-if="showFirstPage"
       @click.prevent="handleFirst"

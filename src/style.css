@@ -50,45 +50,19 @@
   }
   .btn-header1 {
     background-color: rgb(245,246,239);
-    border-color: rgb(41, 42, 42) ;
-    
+    border-color: rgb(41,42,42) ;
    
     @apply  
       cursor-pointer
       px-4
       py-3
       border-1
-      hover:border-[rgb(105,192,172)]
       text-[rgb(41,42,42)]
       text-sm
       font-semibold
       rounded-lg
       shadow-lg
-      hover:text-[rgb(105,192,172)]
-      transition-colors
-      focus:outline-none
-      focus:ring-2
-      flex
-      justify-center
-      items-center
-      gap-2
-      whitespace-nowrap;
-  }
-  .btn-plusminus {
-    background-color: rgb(245,246,239);
-    border-color: rgb(41, 42, 42) ;
-   
-    @apply  
-      cursor-pointer
-      px-4
-      py-3
-      border-1
       hover:border-[rgb(105,192,172)]
-      text-[rgb(41,42,42)]
-      text-sm
-      font-semibold
-      rounded-lg
-      shadow-lg
       hover:text-[rgb(105,192,172)]
       transition-colors
       focus:outline-none
@@ -135,4 +109,8 @@
   
 }
 
+}
+
+body {
+  background-color: rgb(245, 246, 239);
 }

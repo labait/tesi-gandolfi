@@ -58,7 +58,7 @@
       v-if="hasImage"
       @click="analyze"
       :disabled="isAnalyzing"
-      class="btn-default mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+      class="btn-header1 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span v-if="!isAnalyzing">Analyze Image</span>
       <span v-else>Analyzing...</span>

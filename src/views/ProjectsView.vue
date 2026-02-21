@@ -11,6 +11,7 @@ const projects = ref([])
 const isLoading = ref(false)
 
 const global = inject('global')
+const openLightbox = inject('openLightbox')
 
 const loadProjects = async (userId) => {
   if (!userId) {
@@ -38,6 +39,9 @@ const loadProjects = async (userId) => {
         alt: data.titolo || 'Project'
       }
     })
+
+    // Update global state with projects
+    global.value.projects = projects.value
   } catch (error) {
     console.error('Error loading projects:', error)
     projects.value = []
@@ -61,6 +65,12 @@ const handleItemDeleted = async (deletedItemId) => {
   } catch (error) {
     console.error('Error deleting project:', error)
     alert('Error deleting project')
+  }
+}
+
+const handleItemZoom = (item) => {
+  if (item.image && openLightbox) {
+    openLightbox(item.image)
   }
 }
 
@@ -97,18 +107,21 @@ onUnmounted(() => {
 
 <template>
   <div>
-    <div class="text-2xl font-bold ml-10 mb-1 mt-10">List of Projects</div>
+    <div class="text-3xl text-[rgb(41,42,42)] font-semibold text-center mb-2">My Projects</div>
     <div v-if="user" class="mt-8">
       <div v-if="isLoading" class="text-center py-8">
-        <p class="textgradient font-bold">Loading projects...</p>
+        <p class="text-[rgb(41,42,42)] mt-20 font-semibold">Loading projects...</p>
       </div>
-      <div v-else-if="projects.length > 0">
+      <div v-else-if="projects.length > 0" class="ml-10 mr-10">
         <List 
           :items="projects" 
           :allow-delete="true"
           :allow-bookmark="true"
           :allow-add="false"
+          :hide-view-mode-toggle="true"
+          :allow-zoom="true"
           @item-deleted="handleItemDeleted"
+          @item-zoom="handleItemZoom"
         />
       </div>
       <div v-else class="text-center py-8">

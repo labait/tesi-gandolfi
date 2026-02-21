@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, computed } from 'vue'
 import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
-import Search from '../components/Search.vue'
-
+import List from '../components/List.vue'
+import ListPagination from '../components/ListPagination.vue'
 
 const user = ref(null)
+const global = inject('global')
 const openLightbox = inject('openLightbox')
 
 onMounted(() => {
@@ -20,30 +21,33 @@ const handleItemZoom = (item) => {
   }
 }
 
-const items = Array(20).fill().map( (i, index) => {
-  return {
-    "image": `https://picsum.photos/800/600?p=${index}`
-  }
-})
-console.log(items)
+const handleItemDeleted = (itemId) => {
+  console.log('Item deleted:', itemId)
+}
+
+const handleItemBookmarked = (item) => {
+  console.log('Item bookmarked:', item)
+}
+
+const handleItemAdded = (item) => {
+  console.log('Item added:', item)
+}
+
+// Use search results from global state, or fallback to empty array
+const items = computed(() => global.value?.searchResults || [])
 
 </script>
 
 <template>
-  <!-- Teleport per mettere Search nell'header -->
-  <Teleport to="header .flex-1">
-    <Search 
-      :auto-search="true" 
-      :initial-query="project.analysis.search_text"
-      :allow-bookmark="true"
-      :allow-add="true"
-      :allow-zoom="true"
-    />
-  </Teleport>
-
-  <div class="container mx-auto">
-    <!-- resto del contenuto -->
-  </div>
+  <ListPagination />
+  <List 
+    :items="items"
+    :allow-zoom="true"
+    @item-zoom="handleItemZoom"
+    @item-deleted="handleItemDeleted"
+    @item-bookmarked="handleItemBookmarked"
+    @item-added="handleItemAdded"
+  />
 </template>
 
 

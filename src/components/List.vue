@@ -1,6 +1,6 @@
 <!-- SEZIONE ELEMENTI SALVATI -->
 <script setup>
-import { ref, inject, defineProps, defineEmits, computed } from 'vue'
+import { ref, inject, defineProps, defineEmits, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import DialogBox from './DialogBox.vue'
 import { PlusIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
@@ -36,6 +36,10 @@ const props = defineProps({
   allowZoom: {
     type: Boolean,
     default: false
+  },
+  hideViewModeToggle: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -64,27 +68,47 @@ let dragStartY = 0
 let canvasStartX = 0
 let canvasStartY = 0
 
-// Posizioni delle immagini nella mappa (disposte in griglia regolare)
+// Posizioni delle immagini nella mappa (disposte in griglia a alveare)
+// Track screen width to adjust layout on small (smartphone) screens
+const screenWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+onMounted(() => {
+  const onResize = () => { screenWidth.value = window.innerWidth }
+  window.addEventListener('resize', onResize)
+  // keep reference to removal function
+  onUnmounted(() => window.removeEventListener('resize', onResize))
+})
+
 const imagePositions = computed(() => {
   const cols = Math.ceil(Math.sqrt(props.items.length))
   const rows = Math.ceil(props.items.length / cols)
-  const spacingX = 100 / (cols + 0.5) // Spaziatura orizzontale percentuale
-  const spacingY = 100 / (rows + 0.5) // Spaziatura verticale percentuale
-  
+
+  const isMobile = screenWidth.value <= 640 // smartphone breakpoint
+
+  // Spaziatura per layout a alveare
+  const baseSpacingX = 100 / (cols + 0.5)
+  const baseSpacingY = 100 / (rows + 0.1)
+  // Su mobile: mantiene un po' più di spazio orizzontale ma riduce lo spazio verticale
+  const spacingMultiplierX = isMobile ? 1.15 : 1
+  const spacingMultiplierY = isMobile ? 0.9 : 1
+  const spacingX = baseSpacingX * spacingMultiplierX
+  const spacingY = baseSpacingY * spacingMultiplierY
+
   return props.items.map((item, index) => {
     const col = index % cols
     const row = Math.floor(index / cols)
-    
-    const x = spacingX * (col + 1)
+
+    // Layout a alveare: le righe dispari sono sfalsate
+    const xOffset = row % 2 === 1 ? spacingX * 0.5 : 0
+    const x = spacingX * (col + 1) + xOffset
     const y = spacingY * (row + 1)
-    const size = 200 // Dimensione fissa per tutte le immagini
-    
+    const size = isMobile ? 140 : 180 // rimpicciolisci leggermente su smartphone
+
     return {
       ...item,
       x: x,
       y: y,
       size: size,
-      rotation: 0  // Nessuna rotazione - immagini dritte
+      rotation: 0
     }
   })
 })
@@ -329,7 +353,7 @@ const handleZoomClick = (e, item) => {
 
 <template>
   <!-- TOGGLE BOTTONI MODALITÀ -->
-  <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex gap-3 bg-white/95 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-2xl border border-gray-200 ">
+  <div v-if="!hideViewModeToggle" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex gap-3 bg-[rgb(245,246,239)]/95 backdrop-blur-sm px-4 py-3 rounded-2xl shadow-2xl border border-gray-200 ">
     <button
       @click="viewMode = 'grid'"
       :class="viewMode === 'grid' 
@@ -355,12 +379,12 @@ const handleZoomClick = (e, item) => {
 
   <!-- MODALITÀ GRIGLIA -->
   <div v-if="viewMode === 'grid'" 
-    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
+    class="grid background grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 px-5 gap-10 mt-10">
     <div 
       v-for="item in items" 
       :key="item.id || item.image" 
       @click="handleItemClick(item)"
-      class="max-h-64 relative hover:scale-105 hover:shadow-lg  hover:z-10 transition-all duration-300 cursor-pointer group"
+      class="max-h-50 relative hover:scale-105 hover:shadow-lg  hover:z-10 transition-all duration-300 cursor-pointer group"
     >
       <!-- Icone in alto a destra -->
       <div class="absolute top-2 right-2 z-20 flex gap-2">
@@ -415,7 +439,9 @@ const handleZoomClick = (e, item) => {
         </button>
       </div>
       
-      <div v-if="item.title" class="title absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 rounded-b-lg z-10">{{ item.title }}</div>
+
+      
+      <div v-if="item.title" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent text-white p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">{{ item.title }}</div>
       <img :src="item.image" :alt="item.alt" 
         class=" w-full h-full object-cover rounded-lg " 
       />
@@ -425,24 +451,24 @@ const handleZoomClick = (e, item) => {
   <!-- MODALITÀ MAPPA ESPLORABILE -->
   <div v-else class="fixed inset-0 z-30 overflow-hidden bg-[rgb(245,246,239)]">
     <!-- Controlli Zoom -->
-    <div class="absolute mt-90 right-6 z-40 flex flex-col gap-2 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-lg">
+    <div class="absolute mt-90 right-6 z-40 flex flex-col gap-2 bg-[rgb(245,246,239)]/95 backdrop-blur-sm p-2 rounded-xl shadow-lg">
       <button
         @click="zoomIn"
-        class="p-3 bg-white  rounded-lg transition-all shadow-md font-bold text-xl btn-plusminus"
+        class="p-3   rounded-lg transition-all shadow-md font-bold text-xl btn-header1"
         title="Zoom In"
       >
         +
       </button>
       <button
         @click="zoomOut"
-        class="p-3 bg-white  rounded-lg transition-all shadow-md font-bold text-xl btn-plusminus"
+        class="p-3   rounded-lg transition-all shadow-md font-bold text-xl btn-header1"
         title="Zoom Out"
       >
         −
       </button>
       <button
         @click="resetView"
-        class="p-2 bg-white  rounded-lg transition-all shadow-md text-xs btn-plusminus"
+        class="p-2   rounded-lg transition-all shadow-md text-xs btn-header1"
         title="Reset View"
       >
         ⟲
