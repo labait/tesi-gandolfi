@@ -359,7 +359,7 @@ const handleZoomClick = (e, item) => {
       :class="viewMode === 'grid' 
         ? 'bg-[245,246,239] border border-[rgb(105,192,172)] text-[rgb(105,192,172)]' 
         : 'bg-[245,246,239] border border-gray-700 text-gray-700'"
-      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold "
+      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold cursor-pointer"
     >
       <Squares2X2Icon class="w-5 h-5" />
       Grid
@@ -370,7 +370,7 @@ const handleZoomClick = (e, item) => {
       :class="viewMode === 'map' 
         ? 'bg-[245,246,239] border border-[rgb(105,192,172)] text-[rgb(105,192,172)]' 
         : 'bg-[245,246,239] border border-gray-700 text-gray-700'"
-      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold"
+      class="flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-semibold cursor-pointer"
     >
       <MapIcon class="w-5 h-5" />
       Explore
