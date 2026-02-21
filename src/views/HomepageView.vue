@@ -3,7 +3,6 @@ import { ref, onMounted, inject, computed } from 'vue'
 import { auth } from '../Firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 import List from '../components/List.vue'
-import ListPagination from '../components/ListPagination.vue'
 
 const user = ref(null)
 const global = inject('global')
@@ -39,7 +38,6 @@ const items = computed(() => global.value?.searchResults || [])
 </script>
 
 <template>
-  <ListPagination />
   <List 
     :items="items"
     :allow-zoom="true"

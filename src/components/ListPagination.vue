@@ -1,7 +1,7 @@
 <!-- NUMERAZIONE PAGINE RISULTATI -->
 <script setup>
   import { defineProps, defineEmits } from 'vue'
-  import { ArrowUturnLeftIcon, ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
+  import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/vue/24/outline'
   
   const props = defineProps({
     show: {
@@ -16,21 +16,13 @@
       type: Boolean,
       default: false
     },
-    showFirstPage: {
-      type: Boolean,
-      default: false
-    },
     currentPage: {
       type: Number,
       default: 1
-    },
-    totalResults: {
-      type: Number,
-      default: 0
     }
   })
-  
-  const emit = defineEmits(['previous', 'next', 'first'])
+
+  const emit = defineEmits(['previous', 'next'])
 
   const handlePrevious = (event) => {
     event.preventDefault()
@@ -41,24 +33,11 @@
     event.preventDefault()
     emit('next')
   }
-
-  const handleFirst = (event) => {
-    event.preventDefault()
-    emit('first')
-  }
   </script>
   
 
 <template>
   <div v-if="show" class="flex justify-center gap-2 items-center py-2 ">
-    <button
-      v-if="showFirstPage"
-      @click.prevent="handleFirst"
-      class=" text-lightblue hover:text-blue-800 transition-colors cursor-pointer text-sm"
-    >
-      <ArrowUturnLeftIcon class="w-5 h-5" />
-    </button>
-
     <button
       v-if="hasPreviousPage"
       @click.prevent="handlePrevious"
@@ -70,11 +49,10 @@
       <ArrowLeftIcon class="w-6 h-6" />
     </span>
 
-    
     <span class="py-2 text-gray-600 text-xl">
-      Page {{ currentPage }} - {{ totalResults }} results
+      Page {{ currentPage }}
     </span>
-    
+
     <button
       v-if="hasNextPage"
       @click.prevent="handleNext"

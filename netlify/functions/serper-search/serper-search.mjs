@@ -20,7 +20,7 @@ export default async (request, context) => {
     const url = new URL(request.url)
     const q = url.searchParams.get('q')
     const gl = url.searchParams.get('gl') || 'it'
-    const num = url.searchParams.get('num') || '100'
+    const page = url.searchParams.get('page') || '1'
 
     if (!q) {
       return new Response(
@@ -29,7 +29,8 @@ export default async (request, context) => {
       )
     }
 
-    const body = JSON.stringify({ q, gl, num: parseInt(num, 10) || 10 })
+    const pageNum = parseInt(page, 100) || 1
+    const body = JSON.stringify({ q, gl, num: 100, page: pageNum })
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -39,7 +40,7 @@ export default async (request, context) => {
       body
     }
 
-    console.log('Calling Serper Images API:', { q, gl, num })
+    console.log('Calling Serper Images API:', { q, gl, page: pageNum })
 
     const response = await fetch('https://google.serper.dev/images', requestOptions)
 
@@ -73,11 +74,6 @@ export default async (request, context) => {
     return new Response(
       JSON.stringify({
         results,
-        searchInformation: {
-          totalResults,
-          resultCount: totalResults,
-          currentStartIndex: 1
-        }
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     )

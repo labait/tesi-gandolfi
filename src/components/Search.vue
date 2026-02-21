@@ -63,55 +63,41 @@
   const error = ref(null)
   const hasSearched = ref(false)
   
-  // Pagination state
-  const currentStartIndex = ref(1) // 1-based index from Google API
-  const totalResults = ref(0)
-  const resultCount = ref(0)
-  
-  // Perform search with optional start parameter
-  const performSearch = async (startIndex = 1) => {
+  // Pagination: page number only (1-based)
+  const page = ref(1)
+  const hasNextPage = ref(true)
+
+  // Perform search for the given page (passed to API as query param page)
+  const performSearch = async (pageNum = 1) => {
     const query = searchQuery.value.trim()
-    
+
     if (!query) {
       error.value = 'Please enter a search query'
       return
     }
-  
-    // Set global loading state
+
     global.value.loading = 'Searching...'
     error.value = null
     hasSearched.value = true
-  
+
     try {
-      // Build URL with query and optional start parameter
-      let searchUrl = `/.netlify/functions/serper-search?q=${encodeURIComponent(query)}`
-      if (startIndex > 1) searchUrl += `&start=${startIndex}`
-  
-      // Call Netlify function for Google Search
-      const response = await fetch(searchUrl, {
-        method: 'GET'
-      })
-  
+      const searchUrl = `/.netlify/functions/serper-search?q=${encodeURIComponent(query)}&page=${pageNum}`
+
+      const response = await fetch(searchUrl, { method: 'GET' })
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
         throw new Error(errorData.error || `Error: ${response.status}`)
       }
-  
+
       const data = await response.json()
       console.log('Search results:', data)
-  
-      // Update pagination info
-      if (data.searchInformation) {
-        currentStartIndex.value = data.searchInformation.currentStartIndex || 1
-        totalResults.value = data.searchInformation.totalResults || 0
-        resultCount.value = data.searchInformation.resultCount || 0
-      }
-  
-      // Transform Google Search results to List component format
-      // Google Custom Search API returns items with image.thumbnailLink
+
+      page.value = pageNum
+
       if (data.results && Array.isArray(data.results) && data.results.length > 0) {
         searchResults.value = data.results
-          .filter(item => item.link || item.image?.thumbnailLink) // Filter out items without image or link
+          .filter(item => item.link || item.image?.thumbnailLink)
           .map((item, index) => ({
             id: item.link || `result-${index}`,
             image: item.thumbnailUrl || '',
@@ -120,67 +106,38 @@
           }))
       } else {
         searchResults.value = []
+        hasNextPage.value = false
       }
 
-      // Emit search results if in header mode
       if (props.showInHeader) {
         emit('search-results', searchResults.value)
       }
-  
     } catch (err) {
       console.error('Error during search:', err)
       error.value = err.message || 'Error during search'
       searchResults.value = []
     } finally {
-      // Clear global loading state when API response is received
       global.value.loading = null
     }
   }
-  
-  // Handle search (always starts from first page)
+
   const handleSearch = () => {
-    currentStartIndex.value = 1 // Reset to first page
+    page.value = 1
     performSearch(1)
   }
-  
-  // Navigate to first page
-  const goToFirstPage = () => {
-    currentStartIndex.value = 1
-    performSearch(1)
-  }
-  
-  // Navigate to previous page
+
   const goToPreviousPage = () => {
-    if (currentStartIndex.value > 1) {
-      const prevStartIndex = Math.max(1, currentStartIndex.value - 10)
-      currentStartIndex.value = prevStartIndex
-      performSearch(prevStartIndex)
+    if (page.value > 1) {
+      const prevPage = page.value - 1
+      performSearch(prevPage)
     }
   }
-  
-  // Navigate to next page
+
   const goToNextPage = () => {
-    const nextStartIndex = currentStartIndex.value + resultCount.value
-    if (nextStartIndex <= totalResults.value) {
-      currentStartIndex.value = nextStartIndex
-      performSearch(nextStartIndex)
-    }
+    performSearch(page.value + 1)
   }
-  
-  // Check if there's a previous page
-  const hasPreviousPage = () => {
-    return currentStartIndex.value > 1
-  }
-  
-  // Check if there's a next page
-  const hasNextPage = () => {
-    return currentStartIndex.value + resultCount.value <= totalResults.value
-  }
-  
-  // Computed property for current page number
-  const currentPage = computed(() => {
-    return Math.ceil(currentStartIndex.value / 10)
-  })
+
+  const hasPreviousPage = () => page.value > 1
   
   // Handle events from List component
   const handleItemDeleted = (itemId) => {
@@ -252,13 +209,10 @@
       <ListPagination
         :show="true"
         :has-previous-page="hasPreviousPage()"
-        :has-next-page="hasNextPage()"
-        :show-first-page="currentStartIndex > 1"
-        :current-page="currentPage"
-        :total-results="totalResults"
+        :has-next-page="hasNextPage"
+        :current-page="page"
         @previous="goToPreviousPage"
         @next="goToNextPage"
-        @first="goToFirstPage"
       />
     </div>
 
@@ -290,13 +244,10 @@
       <ListPagination
         :show="true"
         :has-previous-page="hasPreviousPage()"
-        :has-next-page="hasNextPage()"
-        :show-first-page="currentStartIndex > 1"
-        :current-page="currentPage"
-        :total-results="totalResults"
+        :has-next-page="hasNextPage"
+        :current-page="page"
         @previous="goToPreviousPage"
         @next="goToNextPage"
-        @first="goToFirstPage"
       />
     </div>
   </div>

@@ -12,7 +12,6 @@ import Loading from './components/Loading.vue'
 import LightBox from './components/LightBox.vue'
 import Search from './components/Search.vue'
 import List from './components/List.vue'
-import ListPagination from './components/ListPagination.vue'
 
 
 const router = useRouter()
